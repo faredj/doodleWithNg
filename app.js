@@ -3,9 +3,14 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-
 var user = require('./routes/users');
 var app = express();
+var mongoose = require('mongoose');
+
+mongoose.Promise = require('bluebird');
+mongoose.connect('mongodb://localhost/doodledb', { promiseLibrary: require('bluebird') })
+    .then(() =>  console.log('connection succesful'))
+    .catch((err) => console.error(err));
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
