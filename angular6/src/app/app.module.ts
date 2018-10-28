@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
     AppComponent
   ],
   imports: [
-    BrowserModule.withServerTransition({ appId: 'universal' })
+    BrowserModule
   ],
   providers: [],
   bootstrap: [AppComponent]
