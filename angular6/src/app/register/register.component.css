@@ -1,0 +1,30 @@
+:host {
+  display: block;
+  width: 400px;
+  margin: 5% auto;
+}
+
+.mat-card-title > h5{
+  margin: 0;
+}
+
+.mat-form-field{
+  width: 100%;
+}
+
+.mat-card-content{
+  margin: 15px 0;
+}
+
+.mat-card-actions{
+  text-align: right;
+}
+
+.register-prenom{
+  width: 49%;
+}
+
+.register-nom{
+  width: 49%;
+  float: right;
+}
