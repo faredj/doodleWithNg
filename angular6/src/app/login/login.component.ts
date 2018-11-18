@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from "../data.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {HttpClient} from "@angular/common/http";
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -28,10 +30,11 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
   `
 })
 export class LoginComponent implements OnInit {
+  private usersUrl = 'http://localhost:3000/api/users';
   loginForm: FormGroup;
   submitted = false;
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: FormBuilder, protected http: HttpClient) { }
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -41,6 +44,26 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    console.log(this.loginForm.value);
+    this.login(this.loginForm.get('email').value, this.loginForm.get('password').value);
+  }
+
+  private login(email: string, password: string) {
+    console.log(email+'  '+password);
+    return this.http.post(`${this.usersUrl}/login`, { email: email, password: password })
+      .pipe().subscribe(
+        user => {
+        console.log(user);
+        /*if (user) {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+        }*/
+        return user;
+      },
+      error => {
+        console.log(error);
+    },);
+  }
+
+  private logout() {
+    localStorage.removeItem('currentUser');
   }
 }

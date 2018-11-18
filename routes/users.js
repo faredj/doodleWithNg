@@ -1,11 +1,23 @@
-var express = require('express');
-var router = express.Router();
+module.exports = function(app) {
 
-var authController = require('../controllers/authController');
+    const users = require('../controllers/userController');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-    authController.register(req, res);
-});
+    app.get('/api/users', function(req, res, next) {
+        users.findAll(req, res);
+    });
 
-module.exports = router;
+    app.post('/api/users/register', function(req, res, next) {
+        users.register(req, res);
+    });
+
+    app.post('/api/users/login', function(req, res, next) {
+        users.login(req, res);
+    });
+
+
+    /*app.get('/api/users/:userId', users.findOne);
+
+    app.put('/api/users', users.update);
+
+    app.delete('/api/users/:userId', users.delete);*/
+};
