@@ -19,12 +19,3 @@
 .mat-card-actions{
   text-align: right;
 }
-
-.register-prenom{
-  width: 49%;
-}
-
-.register-nom{
-  width: 49%;
-  float: right;
-}
