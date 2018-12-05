@@ -18,7 +18,7 @@ import { map } from 'rxjs/operators';
             <input matInput formControlName="email" placeholder="Email">
           </mat-form-field>
           <mat-form-field>
-            <input matInput formControlName="password" placeholder="Mot de passe">
+            <input matInput type="password" formControlName="password" placeholder="Mot de passe">
           </mat-form-field>
         </mat-card-content>
         <mat-card-actions>

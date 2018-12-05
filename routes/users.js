@@ -1,8 +1,10 @@
+var passport = require('passport');
 module.exports = function(app) {
 
     const users = require('../controllers/userController');
 
-    app.get('/api/users', function(req, res, next) {
+    app.get('/api/users', isAuthenticated, function(req, res, next) {
+        console.log(req.isAuthenticated());
         users.findAll(req, res);
     });
 
@@ -10,7 +12,7 @@ module.exports = function(app) {
         users.register(req, res);
     });
 
-    app.post('/api/users/login', function(req, res, next) {
+    app.post('/api/users/login', passport.authenticate('local'), function(req, res, next) {
         users.login(req, res);
     });
 
@@ -21,3 +23,9 @@ module.exports = function(app) {
 
     app.delete('/api/users/:userId', users.delete);*/
 };
+
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated())
+        return next();
+    res.redirect('/');
+}

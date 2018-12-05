@@ -16,7 +16,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     LoginComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({appId: 'doodle-app'}),
     BrowserAnimationsModule,
     AppRoutingModule,
     MaterialModule,

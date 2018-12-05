@@ -1,9 +1,9 @@
-/*var express = require('express');
-var router = express.Router();
+module.exports = function(app) {
 
-router.get('/', function(req, res, next) {
-  res.send('Home app');
-});
+    app.get('/test', function(req, res, next) {
+        console.log(req.user);
+        console.log(req.isAuthenticated());
+        res.send(JSON.stringify(req.session));
+    });
 
-module.exports = router;
-*/
+};
