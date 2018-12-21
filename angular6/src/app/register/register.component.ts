@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators }  from "@angular/forms";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { User } from '../models/User';
+import {Router} from "@angular/router";
+
+const httpOptions = {
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+};
 
 @Component({
   selector: 'app-register',
@@ -26,7 +33,7 @@ import { FormBuilder, FormGroup, Validators }  from "@angular/forms";
             <input matInput formControlName="email" placeholder="Email">
           </mat-form-field>
           <mat-form-field>
-            <input matInput formControlName="password" placeholder="Mot de passe">
+            <input matInput type="password" formControlName="password" placeholder="Mot de passe">
           </mat-form-field>
         </mat-card-content>
         <mat-card-actions>
@@ -39,10 +46,11 @@ import { FormBuilder, FormGroup, Validators }  from "@angular/forms";
 })
 
 export class RegisterComponent implements OnInit {
+  private usersUrl = 'http://localhost:3000/api/users';
   registerForm: FormGroup;
   submitted = false;
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: FormBuilder, protected http: HttpClient, private router: Router) { }
 
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
@@ -54,7 +62,17 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  onSubmit() {
     console.log(this.registerForm.value);
+    return this.http.post<User>(`${this.usersUrl}/register`, this.registerForm.value, httpOptions).subscribe(
+      (val) => {
+        this.router.navigateByUrl('/');
+      },
+      error => {
+        console.log(error);
+      },
+      () => {
+        console.log("The POST observable is now completed.");
+      });
   }
 }
