@@ -34,7 +34,7 @@ exports.register = function(req, res){
                     console.log("login ok");
                     console.log(req.user);
                     console.log(req.isAuthenticated());
-                    //console.log(req.session)
+                    console.log(req.session)
                 });
                 res.json(data);
             }).catch(err => {
