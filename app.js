@@ -69,6 +69,7 @@ app.use(cors(corsOptions));
 
 require('./routes/users.js')(app);
 require('./routes/index.js')(app);
+require('./routes/calendars.js')(app);
 
 // capturer l'erreur 404
 app.use(function (req, res, next) {
