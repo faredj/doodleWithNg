@@ -8,12 +8,14 @@ import { AppRoutingModule } from "./app-routing.module";
 import { LoginComponent } from './login/login.component';
 import { HttpClientModule } from "@angular/common/http";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'doodle-app'}),

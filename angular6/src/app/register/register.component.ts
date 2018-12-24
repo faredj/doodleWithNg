@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators }  from "@angular/forms";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { User } from '../models/User';
 import {Router} from "@angular/router";
+import {MatSnackBar} from "@angular/material";
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -50,7 +51,10 @@ export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   submitted = false;
 
-  constructor(private formBuilder: FormBuilder, protected http: HttpClient, private router: Router) { }
+  constructor(private formBuilder: FormBuilder,
+              protected http: HttpClient,
+              private router: Router,
+              public snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
@@ -63,16 +67,13 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.registerForm.value);
     return this.http.post<User>(`${this.usersUrl}/register`, this.registerForm.value, httpOptions).subscribe(
-      (val) => {
+      () => {
         this.router.navigateByUrl('/');
+        this.snackBar.open('Inscription réussi', 'fermer', {duration: 2000});
       },
       error => {
-        console.log(error);
-      },
-      () => {
-        console.log("The POST observable is now completed.");
+        this.snackBar.open(error.message, 'fermer', {duration: 2000})
       });
   }
 }

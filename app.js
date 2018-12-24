@@ -46,16 +46,15 @@ app.use('/', express.static(path.join(__dirname, 'public/dist/browser')));
 
 //créer une session en utilisant les options fournies sous forme d'un objet
 app.use(session({
-	secret: 'hqdqshdlqdhqlsdmjqsd',
+	secret: 'secret',
 	resave: false,
 	saveUninitialized: true,
 	store: store
 }));
 
 //initialiser le module Passport utilisé par Express
-app.use(passport.initialize());
-
 //modifier l'objet req et modifier la valeur 'user'
+app.use(passport.initialize());
 app.use(passport.session());
 
 //

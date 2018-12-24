@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { DataService } from "../data.service";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {Component, OnInit} from '@angular/core';
+import {DataService} from "../data.service";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
-import { map } from 'rxjs/operators';
+import {map} from 'rxjs/operators';
+import {MatSnackBar} from "@angular/material";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-login',
@@ -34,7 +36,11 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   submitted = false;
 
-  constructor(private formBuilder: FormBuilder, protected http: HttpClient) { }
+  constructor(private formBuilder: FormBuilder,
+              protected http: HttpClient,
+              private router: Router,
+              public snackBar: MatSnackBar) {
+  }
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -48,19 +54,17 @@ export class LoginComponent implements OnInit {
   }
 
   private login(email: string, password: string) {
-    console.log(email+'  '+password);
-    return this.http.post(`${this.usersUrl}/login`, { email: email, password: password })
+    console.log(email + '  ' + password);
+    return this.http.post(`${this.usersUrl}/login`, {email: email, password: password})
       .pipe().subscribe(
         user => {
-        console.log(user);
-        /*if (user) {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-        }*/
-        return user;
-      },
-      error => {
-        console.log(error);
-    },);
+          this.snackBar.open('Connexion réussi', 'fermer', {duration: 1000});
+          this.router.navigateByUrl('/home');
+        },
+        error => {
+          this.snackBar.open(error.message, 'fermer', {duration: 1000})
+        },
+      );
   }
 
   private logout() {
