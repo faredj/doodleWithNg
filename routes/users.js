@@ -1,31 +1,39 @@
 var passport = require('passport');
-module.exports = function(app) {
+var User = require('../models/User');
+var config = require('../config/config');
+const jwt = require('jsonwebtoken');
+require('../config/passport')(passport);
+module.exports = (app) => {
+	
+	const users = require('../controllers/userController');
+	
+	app.get('/api/users', isAuthenticated, users.findAll);
+	
+	app.post('/api/users/register', users.register);
+	
+	app.post('/api/users/login', passport.authenticate('local', {failureRedirect: '/'}), generateToken, users.login);
+	
+	app.get('/api/users/logout', users.logout);
+	
+	/*app.get('/api/users/:userId', users.findOne);
 
-    const users = require('../controllers/userController');
+	app.put('/api/users', users.update);
 
-    app.get('/api/users', isAuthenticated, function(req, res, next) {
-        console.log(req.isAuthenticated());
-        users.findAll(req, res);
-    });
-
-    app.post('/api/users/register', function(req, res, next) {
-        users.register(req, res);
-    });
-
-    app.post('/api/users/login', passport.authenticate('local'), function(req, res, next) {
-        users.login(req, res);
-    });
-
-
-    /*app.get('/api/users/:userId', users.findOne);
-
-    app.put('/api/users', users.update);
-
-    app.delete('/api/users/:userId', users.delete);*/
+	app.delete('/api/users/:userId', users.delete);*/
+	
 };
 
-function isAuthenticated(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-    res.redirect('/');
-}
+generateToken = (req, res, next) => {
+	req.token = jwt.sign({
+		id: req.user.id,
+	}, config.privateKey, {
+		expiresIn: 120
+	});
+	next();
+};
+
+isAuthenticated = (req, res, next) => {
+	if (req.isAuthenticated())
+		return next();
+	res.redirect('/');
+};

@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { DataService } from "../data.service";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
-import { map } from 'rxjs/operators';
+import {MatSnackBar} from "@angular/material";
+import {Router} from "@angular/router";
+import {config} from "../shared/config";
 
 @Component({
   selector: 'app-login',
@@ -30,11 +31,15 @@ import { map } from 'rxjs/operators';
   `
 })
 export class LoginComponent implements OnInit {
-  private usersUrl = 'http://localhost:3000/api/users';
+
   loginForm: FormGroup;
   submitted = false;
 
-  constructor(private formBuilder: FormBuilder, protected http: HttpClient) { }
+  constructor(private formBuilder: FormBuilder,
+              protected http: HttpClient,
+              private router: Router,
+              public snackBar: MatSnackBar) {
+  }
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -48,22 +53,16 @@ export class LoginComponent implements OnInit {
   }
 
   private login(email: string, password: string) {
-    console.log(email+'  '+password);
-    return this.http.post(`${this.usersUrl}/login`, { email: email, password: password })
+    return this.http.post(`${config.baseUrl}users/login`, {email: email, password: password})
       .pipe().subscribe(
         user => {
-        console.log(user);
-        /*if (user) {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-        }*/
-        return user;
-      },
-      error => {
-        console.log(error);
-    },);
-  }
-
-  private logout() {
-    localStorage.removeItem('currentUser');
+          this.snackBar.open('Connexion réussie', 'fermer', {duration: 1000});
+          localStorage.setItem('token', user['token']);
+          this.router.navigateByUrl('/home');
+        },
+        error => {
+          this.snackBar.open('Connexion échouée', 'fermer', {duration: 1000})
+        },
+      );
   }
 }

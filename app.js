@@ -2,6 +2,7 @@
 var express = require('express'),
 	http = require('http'),
 	path = require('path'),
+	config = require('./config/config'),
 	bodyParser = require('body-parser'),
 	app = express(),
 	mongoose = require('mongoose'),
@@ -46,7 +47,7 @@ app.use('/', express.static(path.join(__dirname, 'public/dist/browser')));
 
 //créer une session en utilisant les options fournies sous forme d'un objet
 app.use(session({
-	secret: 'hqdqshdlqdhqlsdmjqsd',
+	secret: config.privateKey,
 	resave: false,
 	saveUninitialized: true,
 	store: store
@@ -58,7 +59,7 @@ app.use(passport.initialize());
 //modifier l'objet req et modifier la valeur 'user'
 app.use(passport.session());
 
-//
+//déclarer les CORS options
 const corsOptions = {
 	origin: 'http://localhost:4200',
 	optionsSuccessStatus: 200
@@ -68,18 +69,16 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 require('./routes/users.js')(app);
-require('./routes/index.js')(app);
-require('./routes/calendars.js')(app);
 
 // capturer l'erreur 404
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
 	var err = new Error('Not Found');
 	err.status = 404;
 	next(err);
 });
 
 // error handler
-app.use(function (err, req, res) {
+app.use((err, req, res) => {
 	res.status(err.status || 500);
 	res.send(JSON.stringify('error'));
 });
