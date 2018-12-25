@@ -1,10 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {DataService} from "../data.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
-import {map} from 'rxjs/operators';
 import {MatSnackBar} from "@angular/material";
 import {Router} from "@angular/router";
+import {config} from "../shared/config";
 
 @Component({
   selector: 'app-login',
@@ -32,7 +31,7 @@ import {Router} from "@angular/router";
   `
 })
 export class LoginComponent implements OnInit {
-  private usersUrl = 'http://localhost:3000/api/users';
+
   loginForm: FormGroup;
   submitted = false;
 
@@ -54,20 +53,16 @@ export class LoginComponent implements OnInit {
   }
 
   private login(email: string, password: string) {
-    console.log(email + '  ' + password);
-    return this.http.post(`${this.usersUrl}/login`, {email: email, password: password})
+    return this.http.post(`${config.baseUrl}users/login`, {email: email, password: password})
       .pipe().subscribe(
         user => {
-          this.snackBar.open('Connexion réussi', 'fermer', {duration: 1000});
+          this.snackBar.open('Connexion réussie', 'fermer', {duration: 1000});
+          localStorage.setItem('token', user['token']);
           this.router.navigateByUrl('/home');
         },
         error => {
-          this.snackBar.open(error.message, 'fermer', {duration: 1000})
+          this.snackBar.open('Connexion échouée', 'fermer', {duration: 1000})
         },
       );
-  }
-
-  private logout() {
-    localStorage.removeItem('currentUser');
   }
 }

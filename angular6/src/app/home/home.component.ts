@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
+import {config} from "../shared/config";
 
 @Component({
   selector: 'app-home',
@@ -14,7 +15,6 @@ import {Router} from "@angular/router";
   `
 })
 export class HomeComponent implements OnInit {
-  private usersUrl = 'http://localhost:3000/api/users';
 
   constructor(protected http: HttpClient,
               private router: Router) {
@@ -24,11 +24,15 @@ export class HomeComponent implements OnInit {
   }
 
   logout(): void {
-    this.http.get(`${this.usersUrl}/logout`).subscribe(
+    this.http.get(`${config.baseUrl}users/logout`).subscribe(
       data => {
+        this.destroyLocalUser();
         this.router.navigateByUrl('/');
-        console.log(data);
       }
     )
+  }
+
+  destroyLocalUser(): void {
+    localStorage.clear();
   }
 }

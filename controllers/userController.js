@@ -5,7 +5,7 @@ var expressValidator = require('express-validator');
 var bcrypt = require('bcrypt');
 const saltRounds = 10;
 
-exports.findAll = function (req, res) {
+exports.findAll = (req, res) => {
 	User.find()
 	.then(users => {
 		res.json(users);
@@ -16,10 +16,10 @@ exports.findAll = function (req, res) {
 	});
 };
 
-exports.register = function (req, res) {
-	//TODO : implementer les test back sur les champs
+exports.register = (req, res) => {
+	//TODO : implementer les test back sur les champs avant save
 	var user = req.body;
-	bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
+	bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
 		user['password'] = hash;
 		var userObj = new User(user);
 		userObj.save()
@@ -33,25 +33,15 @@ exports.register = function (req, res) {
 	});
 };
 
-exports.login = function (req, res, next) {
-	console.log('login process ...');
-	passport.authenticate('local', {
-		successRedirect: '/profile',
-		failureRedirect: '/',
+exports.login = (req, res) => {
+	res.json({
+		user: req.user,
+		token: req.token
 	});
-	/*
-	passport.authenticate('local', (err, user, info) => {
-		if (info)
-			return res.json(info.message);
-		if (err)
-			return err;
-		if (!user)
-			return res.send(JSON.stringify('login KO'));
-		req.login(user, (err) => {
-			if (err)
-				return err;
-			console.log(user);
-			return res.send(JSON.stringify('login OK'));
-		})
-	});*/
+};
+
+exports.logout = (req, res) => {
+	req.session.destroy((err) => {
+		res.json({'msg': 'disconnected'});
+	});
 };

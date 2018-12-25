@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators }  from "@angular/forms";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { User } from '../models/User';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {User} from '../models/User';
 import {Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material";
+import {config} from "../shared/config";
 
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  headers: new HttpHeaders({'Content-Type': 'application/json'})
 };
 
 @Component({
@@ -47,14 +48,15 @@ const httpOptions = {
 })
 
 export class RegisterComponent implements OnInit {
-  private usersUrl = 'http://localhost:3000/api/users';
+
   registerForm: FormGroup;
   submitted = false;
 
   constructor(private formBuilder: FormBuilder,
               protected http: HttpClient,
               private router: Router,
-              public snackBar: MatSnackBar) { }
+              public snackBar: MatSnackBar) {
+  }
 
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
@@ -67,7 +69,7 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit() {
-    return this.http.post<User>(`${this.usersUrl}/register`, this.registerForm.value, httpOptions).subscribe(
+    return this.http.post<User>(`${config.baseUrl}users/register`, this.registerForm.value, httpOptions).subscribe(
       () => {
         this.router.navigateByUrl('/');
         this.snackBar.open('Inscription réussi', 'fermer', {duration: 2000});
