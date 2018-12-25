@@ -69,7 +69,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 require('./routes/users.js')(app);
-require('./routes/index.js')(app);
 
 // capturer l'erreur 404
 app.use((req, res, next) => {
