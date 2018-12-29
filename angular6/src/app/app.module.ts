@@ -11,13 +11,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from './home/home.component';
 import {AuthenticationGuard} from "./shared/app.guard";
 import { JwtModule } from '@auth0/angular-jwt';
+import {CalendarComponent} from "./calendar/calendar.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     RegisterComponent,
     LoginComponent,
-    HomeComponent
+    HomeComponent,
+    CalendarComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'doodle-app'}),
