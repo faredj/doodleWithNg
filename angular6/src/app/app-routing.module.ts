@@ -5,6 +5,7 @@ import {LoginComponent} from "./login/login.component";
 import {HomeComponent} from "./home/home.component";
 import {AuthenticationGuard} from "./shared/app.guard";
 import {CalendarComponent} from "./calendar/calendar.component";
+import {CalendarListComponent} from "./calendar-list/calendar-list.component";
 
 
 const appRoutes: Routes = [
@@ -13,6 +14,10 @@ const appRoutes: Routes = [
   {
     path: 'home', component: HomeComponent,
     children: [
+      {
+        path: '',
+        component: CalendarListComponent
+      },
       {
         path: 'create',
         component: CalendarComponent

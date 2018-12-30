@@ -1,0 +1,13 @@
+.calendarList_container {
+  margin: 2% 10%;
+}
+
+mat-card-title > h5 {
+  font-size: 15px;
+  margin: 10px;
+}
+
+table {
+  width: 100%;
+  box-shadow: none !important;
+}

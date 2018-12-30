@@ -12,6 +12,7 @@ import { HomeComponent } from './home/home.component';
 import {AuthenticationGuard} from "./shared/app.guard";
 import { JwtModule } from '@auth0/angular-jwt';
 import {CalendarComponent} from "./calendar/calendar.component";
+import { CalendarListComponent } from './calendar-list/calendar-list.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import {CalendarComponent} from "./calendar/calendar.component";
     RegisterComponent,
     LoginComponent,
     HomeComponent,
-    CalendarComponent
+    CalendarComponent,
+    CalendarListComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'doodle-app'}),

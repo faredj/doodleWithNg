@@ -1,7 +1,17 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Router} from "@angular/router";
+import {MatSnackBar} from "@angular/material";
+import {CustomValidators} from "../shared/customValidators";
+import {Utils} from "../shared/utils";
+import {User} from "../models/User";
+import {config} from "../shared/config";
+import {Calendar} from "../models/Calendar";
+
+const httpOptions = {
+  headers: new HttpHeaders({'Content-Type': 'application/json'})
+};
 
 @Component({
   selector: 'app-calendar',
@@ -35,7 +45,14 @@ import {Router} from "@angular/router";
           <form [formGroup]="datesForm">
             <ng-template matStepLabel>Dates</ng-template>
             <mat-form-field>
-              <input matInput placeholder="Address" formControlName="secondCtrl" required>
+              <input matInput formControlName="startDate" [matDatepicker]="picker1" placeholder="Date de debut">
+              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field class="margin-left30">
+              <input matInput formControlName="endDate" [matDatepicker]="picker2" placeholder="Date de fin">
+              <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+              <mat-datepicker #picker2></mat-datepicker>
             </mat-form-field>
             <div>
               <button mat-button matStepperPrevious>Précédent</button>
@@ -45,10 +62,17 @@ import {Router} from "@angular/router";
         </mat-step>
         <mat-step>
           <ng-template matStepLabel>Résumé</ng-template>
-          ok
+          <div *ngIf="generalFrom.valid && datesForm.valid">
+            <p>Titre : <b>{{generalFrom.get('title').value}}</b></p>
+            <p>Description :<b>{{generalFrom.get('description').value}}</b></p>
+            <p>Lieux : <b>{{generalFrom.get('address').value}}</b></p>
+            <p>Date debut : <b>{{utils.dateToString(datesForm.get('startDate').value)}}</b></p>
+            <p>Date Fin : <b>{{utils.dateToString(datesForm.get('endDate').value)}}</b></p>
+          </div>
           <div>
             <button mat-button matStepperPrevious>Précédent</button>
             <button mat-button (click)="stepper.reset()">Réinitialiser</button>
+            <button mat-raised-button color="primary" (click)="onSubmit()">Soumettre</button>
           </div>
         </mat-step>
       </mat-horizontal-stepper>
@@ -57,13 +81,16 @@ import {Router} from "@angular/router";
 })
 export class CalendarComponent implements OnInit {
 
+  readonly utils = Utils;
+
   isLinear = true;
   generalFrom: FormGroup;
   datesForm: FormGroup;
 
   constructor(protected http: HttpClient,
               private router: Router,
-              private formBuilder: FormBuilder) {
+              private formBuilder: FormBuilder,
+              public snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
@@ -73,7 +100,31 @@ export class CalendarComponent implements OnInit {
       address: ['', Validators.required]
     });
     this.datesForm = this.formBuilder.group({
-      secondCtrl: ['', Validators.required]
+      startDate: ['', [Validators.required, CustomValidators.validDate]],
+      endDate: ['', [Validators.required, CustomValidators.validDate]]
+    }, {
+      validator: CustomValidators.endDateAfterStartDate
     });
+  }
+
+  onSubmit() {
+    return this.http.post<Calendar>(`${config.baseUrl}calendars/add`, this.formatCalendar({...this.generalFrom.value, ...this.datesForm.value}), httpOptions).subscribe(
+      () => {
+        this.router.navigateByUrl('/home');
+        this.snackBar.open('Calendrier créé avec succès', 'fermer', {duration: 2000});
+      },
+      error => {
+        this.snackBar.open(error.message, 'fermer', {duration: 2000})
+      });
+  }
+
+  formatCalendar(calendar: object): any {
+    return {
+      ...calendar,
+      ...{
+        'userId': config.currentUser._id,
+        'dateCreation': new Date()
+      }
+    }
   }
 }

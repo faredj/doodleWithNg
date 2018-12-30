@@ -1,7 +1,8 @@
 var Calendar = require('../models/Calendar');
 
 exports.findAll = (req, res) => {
-    Calendar.find()
+    console.log(req.query.userId);
+    Calendar.find({'userId': req.query.userId})
         .then(data => {
             res.json(data);
         })
@@ -13,8 +14,7 @@ exports.findAll = (req, res) => {
 };
 
 exports.add = (req, res) => {
-    var calendarObj = new Calendar(req.body);
-
+    let calendarObj = new Calendar(req.body);
     calendarObj.save()
         .then(
             data => {
@@ -31,7 +31,7 @@ exports.add = (req, res) => {
 };
 
 exports.delete = (req, res) => {
-    var calendarObj = new Calendar();
+    let calendarObj = new Calendar();
 
     calendarObj.findByIdAndRemove(req.param.calendatId)
         .then(

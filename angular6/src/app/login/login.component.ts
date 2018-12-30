@@ -12,7 +12,7 @@ import {config} from "../shared/config";
     <mat-card>
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <mat-card-title>
-          <h5>Connexion</h5>
+          <h5>Connexion</h5>    
         </mat-card-title>
         <mat-card-content>
           <mat-form-field>
@@ -58,6 +58,7 @@ export class LoginComponent implements OnInit {
         user => {
           this.snackBar.open('Connexion réussie', 'fermer', {duration: 1000});
           localStorage.setItem('token', user['token']);
+          localStorage.setItem('user', JSON.stringify(user['user']));
           this.router.navigateByUrl('/home');
         },
         error => {

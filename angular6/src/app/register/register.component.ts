@@ -40,7 +40,7 @@ const httpOptions = {
         </mat-card-content>
         <mat-card-actions>
           <a mat-raised-button routerLink="/">Retour</a>
-          <button mat-raised-button color="primary" [disabled]="!registerForm.valid">S'inscrire</button>
+            <button mat-raised-button color="primary" [disabled]="!registerForm.valid">S'inscrire</button>
         </mat-card-actions>
       </form>
     </mat-card>
