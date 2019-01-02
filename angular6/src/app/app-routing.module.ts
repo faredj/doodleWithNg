@@ -1,11 +1,12 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {RegisterComponent} from "./register/register.component";
-import {LoginComponent} from "./login/login.component";
-import {HomeComponent} from "./home/home.component";
+import {RegisterComponent} from "./components/register/register.component";
+import {LoginComponent} from "./components/login/login.component";
+import {HomeComponent} from "./components/home/home.component";
 import {AuthenticationGuard} from "./shared/app.guard";
-import {CalendarComponent} from "./calendar/calendar.component";
-import {CalendarListComponent} from "./calendar-list/calendar-list.component";
+import {CalendarComponent} from "./components/calendar/calendar.component";
+import {CalendarListComponent} from "./components/calendar-list/calendar-list.component";
+import {BookingComponent} from "./components/booking/booking.component";
 
 
 const appRoutes: Routes = [
@@ -21,6 +22,10 @@ const appRoutes: Routes = [
       {
         path: 'create',
         component: CalendarComponent
+      },
+      {
+        path: 'book/:_id',
+        component: BookingComponent
       }
     ]/*canActivate: [AuthenticationGuard]*/
   },

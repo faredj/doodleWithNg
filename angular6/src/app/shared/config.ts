@@ -1,6 +1,8 @@
 const currentUserObj = JSON.parse(localStorage.getItem('user'));
 export const config = {
-  appName: `Meeting Orga`,
+  appName: `Doodle`,
   baseUrl: `http://localhost:3000/api/`,
-  currentUser: currentUserObj
+  currentUser(): any {
+    return JSON.parse(localStorage.getItem('user'));
+  }
 };

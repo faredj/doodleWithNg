@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {Calendar} from "../models/Calendar";
-import {config} from "../shared/config";
+import {Calendar} from "../../models/Calendar";
+import {config} from "../../shared/config";
 import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material";
 import {calendarFormat} from "moment";
-import {Utils} from "../shared/utils";
+import {Utils} from "../../shared/utils";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -42,9 +42,21 @@ const httpOptions = {
               <th mat-header-cell *matHeaderCellDef>Date de fin</th>
               <td mat-cell *matCellDef="let c"> {{utils.dateToString(c.endDate)}}</td>
             </ng-container>
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef>Actions</th>
-              <td mat-cell *matCellDef="let row">-</td>
+            <ng-container matColumnDef="_id" class="calendarList_actions">
+              <th mat-header-cell *matHeaderCellDef class="pl25">Actions</th>
+              <td mat-cell *matCellDef="let c">
+                <button mat-button
+                        [disabled]="isDeleting"
+                        (click)="this.delete(c._id)"
+                        matTooltip="Supprimer">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-button
+                        [routerLink]="['book', c._id]"
+                        matTooltip="Réserver">
+                  <mat-icon>assignment_turned_in</mat-icon>
+                </button>
+              </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="dc"></tr>
             <tr mat-row *matRowDef="let row; columns: dc;"></tr>
@@ -57,8 +69,9 @@ const httpOptions = {
 export class CalendarListComponent implements OnInit {
 
   readonly utils = Utils;
+  isDeleting: boolean = false;
 
-  dc: string[] = ['title', 'description', 'address', 'startDate', 'endDate', 'actions'];
+  dc: string[] = ['title', 'description', 'address', 'startDate', 'endDate', '_id'];
   calendars: Calendar[];
 
   constructor(protected http: HttpClient,
@@ -70,11 +83,11 @@ export class CalendarListComponent implements OnInit {
     this.getCalendars();
   }
 
-  getCalendars(): any {
-    let params = new HttpParams().set('userId', config.currentUser._id);
+  getCalendars() {
+    let userId = config.currentUser()._id;
+    let params = new HttpParams().set('userId', userId);
     return this.http.get<Calendar[]>(`${config.baseUrl}calendars`, {params: params}).subscribe(
       calendars => {
-        console.log(calendars);
         this.calendars = calendars;
       },
       error => {
@@ -82,4 +95,19 @@ export class CalendarListComponent implements OnInit {
       }
     );
   }
+
+  delete(id: string) {
+    this.isDeleting = true;
+    return this.http.post(`${config.baseUrl}calendars/delete`, {calendarId: id}).subscribe(
+      calendar => {
+        this.isDeleting = false;
+        this.calendars = this.calendars.filter(c => c._id != id);
+        this.snackBar.open('Suppression réussie', 'fermer', {duration: 1000});
+      },
+      error => {
+        this.isDeleting = false;
+        this.snackBar.open(error.message, 'fermer', {duration: 1000});
+      }
+    )
+  };
 }

@@ -3,11 +3,11 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material";
-import {CustomValidators} from "../shared/customValidators";
-import {Utils} from "../shared/utils";
-import {User} from "../models/User";
-import {config} from "../shared/config";
-import {Calendar} from "../models/Calendar";
+import {CustomValidators} from "../../shared/customValidators";
+import {Utils} from "../../shared/utils";
+import {User} from "../../models/User";
+import {config} from "../../shared/config";
+import {Calendar} from "../../models/Calendar";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -18,7 +18,7 @@ const httpOptions = {
   styleUrls: ['./calendar.component.css'],
   template: `
     <mat-card class="calendar_stepperCp">
-      <h4>Créer un calendrier</h4>
+      <h4>Organiser une réunion</h4>
       <mat-horizontal-stepper [linear]="isLinear" #stepper>
         <mat-step [stepControl]="generalFrom">
           <form [formGroup]="generalFrom">
@@ -43,7 +43,7 @@ const httpOptions = {
         </mat-step>
         <mat-step [stepControl]="datesForm">
           <form [formGroup]="datesForm">
-            <ng-template matStepLabel>Dates</ng-template>
+            <ng-template matStepLabel>Calendrier</ng-template>
             <mat-form-field>
               <input matInput formControlName="startDate" [matDatepicker]="picker1" placeholder="Date de debut">
               <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
@@ -122,7 +122,7 @@ export class CalendarComponent implements OnInit {
     return {
       ...calendar,
       ...{
-        'userId': config.currentUser._id,
+        'userId': config.currentUser()._id,
         'dateCreation': new Date()
       }
     }

@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {User} from '../models/User';
+import {User} from '../../models/User';
 import {Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material";
-import {config} from "../shared/config";
+import {config} from "../../shared/config";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})

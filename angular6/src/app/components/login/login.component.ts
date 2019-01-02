@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {HttpClient} from "@angular/common/http";
 import {MatSnackBar} from "@angular/material";
 import {Router} from "@angular/router";
-import {config} from "../shared/config";
+import {config} from "../../shared/config";
 
 @Component({
   selector: 'app-login',

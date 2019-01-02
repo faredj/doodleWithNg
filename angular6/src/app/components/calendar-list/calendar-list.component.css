@@ -11,3 +11,14 @@ table {
   width: 100%;
   box-shadow: none !important;
 }
+
+th, td {
+  overflow: hidden;
+  width: 200px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pl25{
+  padding-left: 25px;
+}
