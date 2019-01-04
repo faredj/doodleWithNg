@@ -6,16 +6,6 @@ const User = mongoose.model('User');
 
 module.exports = (passport) => {
 	
-	passport.serializeUser((user, done) => {
-		done(null, user);
-	});
-	
-	passport.deserializeUser((id, done) => {
-		User.findOne({_id: id}, (err, user) => {
-			done(err, user);
-		});
-	});
-	
 	passport.use(new LocalStrategy(
 		{usernameField: 'email'},
 		(email, password, done) => {
@@ -34,6 +24,16 @@ module.exports = (passport) => {
 			});
 		}
 	));
+
+    passport.serializeUser((user, done) => {
+        done(null, user);
+    });
+
+    passport.deserializeUser((id, done) => {
+        User.findOne({_id: id}, (err, user) => {
+            done(err, user);
+        });
+    });
 };
 
 validatePassword = (password, passwordHash) => {

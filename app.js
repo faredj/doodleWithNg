@@ -37,9 +37,6 @@ app.use(bodyParser.urlencoded({'extended': 'false'}));
 //express-validator contient des fonctions de validations utilisés par Express
 app.use(expressValidator());
 
-//coockie-parser utilisé pour parser req.cookie
-app.use(cookieParser());
-
 //charger l'application Angular6 depuis le répertoire 'public/dist/browser'
 app.use('/', express.static(path.join(__dirname, 'public/dist/browser')));
 
@@ -52,6 +49,9 @@ app.use(session({
 	saveUninitialized: true,
 	store: store
 }));
+
+//coockie-parser utilisé pour parser req.cookie
+app.use(cookieParser());
 
 //initialiser le module Passport utilisé par Express
 app.use(passport.initialize());
@@ -68,7 +68,9 @@ const corsOptions = {
 //activer CORS avec les options déjà définies
 app.use(cors(corsOptions));
 
-require('./routes/users.js')(app);
+require('./routes/users')(app);
+require('./routes/calendars')(app);
+require('./routes/bookings')(app);
 
 // capturer l'erreur 404
 app.use((req, res, next) => {

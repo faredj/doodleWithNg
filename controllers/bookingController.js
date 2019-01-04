@@ -1,7 +1,7 @@
-var Calendar = require('../models/Calendar');
+var Booking = require('../models/Booking');
 
 exports.findAll = (req, res) => {
-    Calendar.find({'userId': req.query.userId})
+    Booking.find({'calendarId': req.params.calendarId})
         .then(data => {
             res.json(data);
         })
@@ -13,8 +13,9 @@ exports.findAll = (req, res) => {
 };
 
 exports.add = (req, res) => {
-    let calendarObj = new Calendar(req.body);
-    calendarObj.save()
+    console.log(req.body);
+    let bookingObj = new Booking(req.body);
+    bookingObj.save()
         .then(data => {
             res.json(data);
         })
@@ -26,7 +27,7 @@ exports.add = (req, res) => {
 };
 
 exports.findOne = (req, res) => {
-    Calendar.findOne({'_id': req.params._id})
+    Booking.findOne({'_id': req.params._id})
         .then(data => {
             res.json(data);
         })
@@ -38,7 +39,7 @@ exports.findOne = (req, res) => {
 };
 
 exports.delete = (req, res) => {
-    Calendar.find({_id: req.body.calendarId}).remove()
+    Booking.find({_id: req.body.bookingId}).remove()
         .then(data => {
             res.json(data);
         })
