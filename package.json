@@ -20,17 +20,25 @@
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
-    "express": "~4.16.0",
+    "express": "^4.16.4",
     "express-session": "^1.15.6",
     "express-validator": "^5.3.0",
     "http-errors": "~1.6.2",
     "jsonwebtoken": "^8.4.0",
-    "mongoose": "^5.3.7",
+    "mongoose": "^5.4.1",
     "morgan": "^1.9.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pug": "2.0.0-beta11",
     "serve-favicon": "^2.5.0"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "description": "Projet : Equivalent de Doodle pour planification des réunions",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://git-etudiants.lacl.fr/middleware2018-2019/faredj-hammache-hocine-alouane-farid-hadjadj-abdelmalek-houfel.git"
+  },
+  "author": "",
+  "license": "ISC"
 }
