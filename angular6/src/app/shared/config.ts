@@ -1,8 +1,9 @@
-const currentUserObj = JSON.parse(localStorage.getItem('user'));
+import {User} from "../models/User";
+
 export const config = {
   appName: `Doodle`,
   baseUrl: `http://localhost:3000/api/`,
-  currentUser(): any {
+  currentUser(): User {
     return JSON.parse(localStorage.getItem('user'));
   }
 };

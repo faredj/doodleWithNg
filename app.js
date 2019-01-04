@@ -68,8 +68,9 @@ const corsOptions = {
 //activer CORS avec les options déjà définies
 app.use(cors(corsOptions));
 
-require('./routes/users.js')(app);
-require('./routes/calendars.js')(app);
+require('./routes/users')(app);
+require('./routes/calendars')(app);
+require('./routes/bookings')(app);
 
 // capturer l'erreur 404
 app.use((req, res, next) => {
