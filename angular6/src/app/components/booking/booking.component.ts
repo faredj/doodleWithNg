@@ -77,7 +77,7 @@ export class BookingComponent implements OnInit {
   }
 
   private addBooking(date, calendarId, userId) {
-    console.log(this.isReserved(date, userId));
+    //console.log(this.isReserved(date, userId));
     this.http.post<Booking>(`${config.baseUrl}bookings/add`, {
       calendarId: calendarId,
       userId: userId,
@@ -93,9 +93,17 @@ export class BookingComponent implements OnInit {
     )
   }
 
-  protected isReserved(date, userId): Booking {
+  protected isReserved(date, userId): boolean {
     console.log(date, userId, this.bookings);
-    return this.bookings.find(b => (new Date(b.reservedDate) === date && b.userId === userId));
+    let reserved: boolean;
+    //return this.bookings.find(b => (new Date(b.reservedDate) === date && b.userId === userId));
+    for(let b of this.bookings){
+      if(new Date(b.reservedDate)=== date && b.userId === userId){
+        reserved = true;
+        break;
+      }
+    }
+    return reserved;
   }
 
   private deleteBooking(id: string) {
