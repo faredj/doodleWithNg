@@ -1,4 +1,6 @@
-//importer les modules à utiliser
+//importer les modules à utiliser*/
+
+//Require the dev-dependencies*/
 var express = require('express'),
 	http = require('http'),
 	path = require('path'),
@@ -13,36 +15,36 @@ var express = require('express'),
 	passport = require('passport'),
 	MongoDBStore = require('connect-mongodb-session')(session),
 	
-	//init port
+	/*initialise the port*/
 	port = process.env.PORT || '3000';
 
-//utiliser bleubird pour l'async
+//use bleubird for the async*/
 mongoose.Promise = require('bluebird');
 
-//connexion à la base de donnée
+//Database Connection*/
 mongoose.connect('mongodb://localhost/doodledb', {promiseLibrary: require('bluebird')})
 .then(() => console.log('connection succesful'))
 .catch((err) => console.error(err));
 
-//enregistrer la session Express dans MongoDB
+//save Express session in MongoDB*/
 var store = new MongoDBStore({
 	uri: 'mongodb://localhost:27017/doodledb',
 	collection: 'sessions'
 });
 
-//parser le req.body pour exploiter les données reçues
+//parse the req.body to exploit the received data*/
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({'extended': 'false'}));
 
-//express-validator contient des fonctions de validations utilisés par Express
+//express-validator contains validation functions used by Express*/
 app.use(expressValidator());
 
-//charger l'application Angular6 depuis le répertoire 'public/dist/browser'
+// to load the Angular6 application from the directory 'public/dist/browser'*/
 app.use('/', express.static(path.join(__dirname, 'public/dist/browser')));
 
 //app.get('/*', (req, res) => res.sendFile(path.join(__dirname)));
 
-//créer une session en utilisant les options fournies sous forme d'un objet
+//create a session using the options provided as an object*/
 app.use(session({
 	secret: config.privateKey,
 	resave: false,
@@ -50,47 +52,47 @@ app.use(session({
 	store: store
 }));
 
-//coockie-parser utilisé pour parser req.cookie
+//coockie-parser used to parser req.cookie*/
 app.use(cookieParser());
 
-//initialiser le module Passport utilisé par Express
+//initialise the Passport module used by Express*/
 app.use(passport.initialize());
 
-//modifier l'objet req et modifier la valeur 'user'
+//modify the object req and modify the value 'user'*/
 app.use(passport.session());
 
-//déclarer les CORS options
+//declare the CORS options*/
 const corsOptions = {
 	origin: 'http://localhost:4200',
 	optionsSuccessStatus: 200
 };
 
-//activer CORS avec les options déjà définies
+//activate CORS with already defined options*/
 app.use(cors(corsOptions));
 
 require('./routes/users')(app);
 require('./routes/calendars')(app);
 require('./routes/bookings')(app);
 
-// capturer l'erreur 404
+// capture error 404*/
 app.use((req, res, next) => {
 	var err = new Error('Not Found');
 	err.status = 404;
 	next(err);
 });
 
-// error handler
+// error handler*/
 app.use((err, req, res) => {
 	res.status(err.status || 500);
 	res.send(JSON.stringify('error'));
 });
 
-//set le port de l'application
+//set the port of the application*/
 app.set('port', port);
 
 
-//créer le serveur
+//create the server*/
 var server = http.createServer(app);
 
-//lancer le serveur
+//launch the server*/
 server.listen(port);

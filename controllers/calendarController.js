@@ -1,5 +1,10 @@
+/**
+ * @fileOverview this file contains the request to create a new calendar as well as the request to delete a calendar
+ */
+
 var Calendar = require('../models/Calendar');
 
+/**Get all the existing calendars*/
 exports.findAll = (req, res) => {
     Calendar.find({'userId': req.query.userId})
         .then(data => {
@@ -11,7 +16,7 @@ exports.findAll = (req, res) => {
             });
         });
 };
-
+/**Get a  specific  calendar*/
 exports.add = (req, res) => {
     let calendarObj = new Calendar(req.body);
     calendarObj.save()
@@ -24,7 +29,7 @@ exports.add = (req, res) => {
             })
         });
 };
-
+/**add a calendar*/
 exports.findOne = (req, res) => {
     Calendar.findOne({'_id': req.params._id})
         .then(data => {
@@ -36,7 +41,7 @@ exports.findOne = (req, res) => {
             });
         });
 };
-
+/**delete a calendar*/
 exports.delete = (req, res) => {
     Calendar.find({_id: req.body.calendarId}).remove()
         .then(data => {

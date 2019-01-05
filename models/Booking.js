@@ -1,4 +1,12 @@
+/**
+ * The data-layer for a Booking
+ * @module models
+ */
+
 var mongoose = require('mongoose');
+/**
+ * @constructor Booking
+ */
 
 var BookingSchema = new mongoose.Schema({
     id: String,

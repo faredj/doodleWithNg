@@ -1,3 +1,8 @@
+/**
+ * @fileOverview this file  contains all the routes of the requests concerning meetings
+ * @path {POST} /api/calendars/add request to create new meeting.
+ * @path {PUT} api/calendars/delete  request to remove a meeting
+ */
 var passport = require('passport');
 module.exports = function (app) {
     const calendars = require('../controllers/calendarController');

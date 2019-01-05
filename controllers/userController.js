@@ -1,3 +1,8 @@
+/**
+ * @fileOverview this file contains the request to create a new user, to sign up as well as the request to login and logout
+ */
+
+
 var User = require('../models/User');
 var passport = require('passport');
 require('../config/passport')(passport);
@@ -15,6 +20,14 @@ exports.findAll = (req, res) => {
 		});
 	});
 };
+/**
+ * Register
+ *
+ * @name Registration
+ * @body {String} password to secure the account
+ * @response {Object} user the informations of the user
+ * @code {500} if  it's a bad request
+ */
 
 exports.register = (req, res) => {
 	//TODO : implementer les test back sur les champs avant save
@@ -33,12 +46,27 @@ exports.register = (req, res) => {
 	});
 };
 
+/**
+ * Login
+ *
+ * @name Authentification
+ * @response {Object} user the informations of the user
+ * @response {String} token the token of the session
+ */
+
+
 exports.login = (req, res) => {
 	res.json({
 		user: req.user,
 		token: req.token
 	});
 };
+
+/**
+ * Logout
+ *
+ * @name Logout
+ */
 
 exports.logout = (req, res) => {
 	req.session.destroy((err) => {
