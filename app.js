@@ -12,6 +12,7 @@ var express = require('express'),
 	session = require('express-session'),
 	passport = require('passport'),
 	MongoDBStore = require('connect-mongodb-session')(session),
+
 	
 	//init port
 	port = process.env.PORT || '3000';
@@ -20,7 +21,7 @@ var express = require('express'),
 mongoose.Promise = require('bluebird');
 
 //connexion à la base de donnée
-mongoose.connect('mongodb://localhost/doodledb', {promiseLibrary: require('bluebird')})
+mongoose.connect('mongodb://localhost/doodledb',{promiseLibrary: require('bluebird')})
 .then(() => console.log('connection succesful'))
 .catch((err) => console.error(err));
 
