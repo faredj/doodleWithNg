@@ -78,13 +78,16 @@ exports.login = (req, res) => {
                         });
                         res.json({
                             token: token,
-                            user: user
+                            user: user,
+                            success: true
                         });
                     }
                     else {
                         res.sendStatus(401);
                     }
                 });
+            } else {
+                res.json({success: false});
             }
         });
     } else {

@@ -55,11 +55,15 @@ export class LoginComponent implements OnInit {
   private login(email: string, password: string) {
     return this.http.post(`${config.baseUrl}users/login`, {email: email, password: password})
       .pipe().subscribe(
-        user => {
-          this.snackBar.open('Connexion réussie', 'fermer', {duration: 1000});
-          localStorage.setItem('token', user['token']);
-          localStorage.setItem('user', JSON.stringify(user['user']));
-          this.router.navigateByUrl('/home');
+        data => {
+          if (data['success']) {
+            this.snackBar.open('Connexion réussie', 'fermer', {duration: 1000});
+            localStorage.setItem('token', data['token']);
+            localStorage.setItem('user', JSON.stringify(data['user']));
+            this.router.navigateByUrl('/home');
+          } else {
+            this.snackBar.open('Email ou mot de passes invalides', 'fermer', {duration: 1000});
+          }
         },
         error => {
           this.snackBar.open('Connexion échouée', 'fermer', {duration: 1000})
