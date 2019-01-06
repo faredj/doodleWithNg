@@ -25,6 +25,8 @@ mongoose.connect('mongodb://localhost/doodledb',{promiseLibrary: require('bluebi
 .then(() => console.log('connection succesful'))
 .catch((err) => console.error(err));
 
+mongoose.set('useFindAndModify', false);
+
 //enregistrer la session Express dans MongoDB
 var store = new MongoDBStore({
 	uri: 'mongodb://localhost:27017/doodledb',
@@ -95,3 +97,4 @@ var server = http.createServer(app);
 
 //lancer le serveur
 server.listen(port);
+module.exports = app;
