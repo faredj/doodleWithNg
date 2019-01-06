@@ -11,6 +11,7 @@
 ## Installation de l'application
 
  **1. MongoDB**
+ 
  La version MongoDB utilisée est la 4.0.5, téléchargeable depuis le lien ci dessous : 
  https://www.mongodb.com/download-center/community
  
@@ -18,6 +19,7 @@
  https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/
  
  **2. NodeJs / Npm**
+ 
  La version de NodeJs utilisée est 8.11.3 
  La version Npm utilisée est 6.3.0
  
