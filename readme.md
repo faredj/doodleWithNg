@@ -36,3 +36,12 @@
  - Pour lancer l'application Angular (front), il faut se positionner dans le dossier `/angular6`  et exécuter la commande `npm install`
 
 Une fois lancés l'API est en écoute sur le port `:3000` et l'application Angular sur le port `:4200`
+
+## Fonctionnalitées de l'application
+
+ - Inscription d'un nouvel utilisateur.
+ - Connexion avec un email et mot de passe.
+ - Utilisation des JsonWebToken (JWT) pour l'authentification et sécurisation des routes.
+ - Créstion d'une nouvelle réunion.
+ - Possibilité de réserver dans la réunion.
+ - Possibilité d'inviter à la réunion d'autre participants en envoyant la référence aux autre utilisateurs.
