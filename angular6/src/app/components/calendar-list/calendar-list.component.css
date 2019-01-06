@@ -22,3 +22,20 @@ th, td {
 .pl25{
   padding-left: 25px;
 }
+
+.calendarList_titleCard {
+  margin: 10px 0 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.calendarList_fieldShare > mat-card {
+  font-size: 14px;
+  padding: 5px 10px;
+  display: flex;
+}
+
+.calendarList_btnShare{
+  height: 40px;
+  margin: 0 10px;
+}

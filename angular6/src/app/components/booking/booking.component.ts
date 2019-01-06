@@ -26,12 +26,12 @@ const httpOptions = {
           <div class="calendarBook_linkToShare">
             <mat-card *ngIf="calendar">
               <p>
-                Pour partager ce calendrier envoyer le lien ci-dessous :<br/>
-                <b>{{config.baseUrl}}calendars/share/{{calendar._id}}</b>
+                Pour partager cette réunion envoyer la référence ci-dessous :<br/>
+                <b>{{calendar._id}}</b>
               </p>
               <mat-icon
                 matTooltip="Copier le lien"
-                (click)="copyText(config.baseUrl+'calendars/share/'+calendar._id)">
+                (click)="copyText(calendar._id)">
                 filter_none
               </mat-icon>
             </mat-card>

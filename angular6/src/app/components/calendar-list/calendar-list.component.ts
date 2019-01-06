@@ -5,6 +5,8 @@ import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material";
 import {Utils} from "../../shared/utils";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {User} from "../../models/User";
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -18,8 +20,20 @@ const httpOptions = {
   template: `
     <div>
       <mat-card class="calendarList_container">
-        <mat-card-title>
+        <mat-card-title class="calendarList_titleCard">
           <h5>Mes réunions</h5>
+          <div class="calendarList_fieldShare">
+            <mat-card>
+              <form [formGroup]="refForm" (ngSubmit)="onSubmit()">
+                <mat-form-field>
+                  <input matInput formControlName="refToShare" placeholder="Référence calendrier">
+                </mat-form-field>
+                <button mat-button mat-raised-button class="calendarList_btnShare">
+                  Participer
+                </button>
+              </form>
+            </mat-card>
+          </div>
         </mat-card-title>
         <mat-card-content>
           <table mat-table [dataSource]="calendars" class="mat-elevation-z8">
@@ -71,22 +85,26 @@ export class CalendarListComponent implements OnInit {
 
   readonly utils = Utils;
   isDeleting: boolean = false;
+  refForm: FormGroup;
 
   dc: string[] = ['title', 'description', 'address', 'startDate', 'endDate', '_id'];
   calendars: Calendar[];
 
-  constructor(protected http: HttpClient,
+  constructor(private formBuilder: FormBuilder,
+              protected http: HttpClient,
               private router: Router,
               public snackBar: MatSnackBar) {
   }
 
   ngOnInit() {
     this.getCalendars();
+    this.refForm = this.formBuilder.group({
+      refToShare: ['', Validators.required]
+    });
   }
 
   getCalendars() {
-    let userId = config.connectedUser()._id,
-      authHeaders = new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('token')}`);
+    let userId = config.connectedUser()._id;
     return this.http.get<Calendar[]>(`${config.baseUrl}calendars/all/${userId}`, httpOptions).subscribe(
       calendars => {
         this.calendars = calendars;
@@ -111,4 +129,20 @@ export class CalendarListComponent implements OnInit {
       }
     )
   };
+
+  onSubmit() {
+    console.log(this.refForm.value);
+    return this.http.post(`${config.baseUrl}invite`, {...this.refForm.value, ...{userId: config.connectedUser()._id}}, httpOptions).subscribe(
+      data => {
+        if(data['success']){
+          this.snackBar.open('Invitation réussie', 'fermer', {duration: 1000});
+        }else{
+          this.snackBar.open(data['msg'], 'fermer', {duration: 1000});
+        }
+      },
+      error => {
+        this.snackBar.open(error.message, 'fermer', {duration: 1000});
+      }
+    )
+  }
 }

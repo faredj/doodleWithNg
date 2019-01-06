@@ -53,6 +53,7 @@ app.use(cors(corsOptions));
 require('./routes/users')(app);
 require('./routes/calendars')(app);
 require('./routes/bookings')(app);
+require('./routes/invitations')(app);
 
 // capturer l'erreur 404
 app.use((req, res, next) => {
