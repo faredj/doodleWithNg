@@ -7,6 +7,37 @@ mat-card-title > h5 {
   margin: 10px;
 }
 
-.calendarBook_datesCols{
+.calendarBook_datesCols {
   background: gainsboro;
+}
+
+.calendarBook_titleCard {
+  margin: 10px 0 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.calendarBook_titleCard > h5 {
+  margin: 15px;
+  font-size: 18px;
+}
+
+.calendarBook_linkToShare {
+  float: right;
+}
+
+.calendarBook_linkToShare > mat-card {
+  font-size: 14px;
+  padding: 5px 10px;
+  display: flex;
+}
+
+.calendarBook_linkToShare > mat-card > mat-icon {
+  margin-left: 20px;
+}
+
+.calendarBook_linkToShare > mat-card > p {
+  margin: 0;
+  line-height: 20px;
+  font-weight: 400;
 }

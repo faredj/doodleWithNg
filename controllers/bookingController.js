@@ -17,7 +17,6 @@ exports.findAll = (req, res) => {
 };
 /**add a booking*/
 exports.add = (req, res) => {
-    console.log(req.body);
     let bookingObj = new Booking(req.body);
     bookingObj.save()
         .then(data => {
@@ -31,7 +30,7 @@ exports.add = (req, res) => {
 };
 
 exports.findOne = (req, res) => {
-    Booking.findOne({'_id': req.params._id})
+    Booking.findOne({_id: req.params._id})
         .then(data => {
             res.json(data);
         })

@@ -1,40 +1,34 @@
-//importer les modules à utiliser*/
+//importer les modules à utiliser
+let express = require('express'),
+    http = require('http'),
+    path = require('path'),
+    passport = require('passport'),
+    config = require('./config/config'),
+    bodyParser = require('body-parser'),
+    app = express(),
+    mongoose = require('mongoose'),
+    cors = require('cors'),
+    cookieParser = require('cookie-parser'),
+    expressValidator = require('express-validator');
 
-//Require the dev-dependencies*/
-var express = require('express'),
-	http = require('http'),
-	path = require('path'),
-	config = require('./config/config'),
-	bodyParser = require('body-parser'),
-	app = express(),
-	mongoose = require('mongoose'),
-	cors = require('cors'),
-	cookieParser = require('cookie-parser'),
-	expressValidator = require('express-validator'),
-	session = require('express-session'),
-	passport = require('passport'),
-	MongoDBStore = require('connect-mongodb-session')(session),
-	
-	/*initialise the port*/
-	port = process.env.PORT || '3000';
+//init port
+port = process.env.PORT || '3000';
 
 //use bleubird for the async*/
 mongoose.Promise = require('bluebird');
 
 //Database Connection*/
 mongoose.connect('mongodb://localhost/doodledb', {promiseLibrary: require('bluebird')})
-.then(() => console.log('connection succesful'))
-.catch((err) => console.error(err));
-
-//save Express session in MongoDB*/
-var store = new MongoDBStore({
-	uri: 'mongodb://localhost:27017/doodledb',
-	collection: 'sessions'
-});
+    .then(() => console.log('Connexion à MongoDB réussie'))
+    .catch((err) => console.error(err));
 
 //parse the req.body to exploit the received data*/
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({'extended': 'false'}));
+app.use(bodyParser.urlencoded({'extended': true}));
+
+//initialser passport et invoker la JWTstrategy
+app.use(passport.initialize());
+require('./config/passport')(passport);
 
 //express-validator contains validation functions used by Express*/
 app.use(expressValidator());
@@ -44,27 +38,13 @@ app.use('/', express.static(path.join(__dirname, 'public/dist/browser')));
 
 //app.get('/*', (req, res) => res.sendFile(path.join(__dirname)));
 
-//create a session using the options provided as an object*/
-app.use(session({
-	secret: config.privateKey,
-	resave: false,
-	saveUninitialized: true,
-	store: store
-}));
-
-//coockie-parser used to parser req.cookie*/
+//coockie-parser utilisé pour parser req.cookie
 app.use(cookieParser());
 
-//initialise the Passport module used by Express*/
-app.use(passport.initialize());
-
-//modify the object req and modify the value 'user'*/
-app.use(passport.session());
-
-//declare the CORS options*/
+//déclarer les CORS options
 const corsOptions = {
-	origin: 'http://localhost:4200',
-	optionsSuccessStatus: 200
+    origin: 'http://localhost:4200',
+    optionsSuccessStatus: 200
 };
 
 //activate CORS with already defined options*/
@@ -73,18 +53,19 @@ app.use(cors(corsOptions));
 require('./routes/users')(app);
 require('./routes/calendars')(app);
 require('./routes/bookings')(app);
+require('./routes/invitations')(app);
 
 // capture error 404*/
 app.use((req, res, next) => {
-	var err = new Error('Not Found');
-	err.status = 404;
-	next(err);
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
 // error handler*/
 app.use((err, req, res) => {
-	res.status(err.status || 500);
-	res.send(JSON.stringify('error'));
+    res.status(err.status || 500);
+    res.send(JSON.stringify('error'));
 });
 
 //set the port of the application*/
