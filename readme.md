@@ -44,4 +44,4 @@ Une fois lancés l'API est en écoute sur le port `:3000` et l'application Angul
  - Utilisation des JsonWebToken (JWT) pour l'authentification et sécurisation des routes.
  - Création d'une nouvelle réunion.
  - Possibilité de réserver dans la réunion.
- - Possibilité d'inviter à la réunion d'autre participants en leurs envoyant la référence.
+ - Possibilité d'inviter à la réunion d'autre participants en leurs envoyant la référence de la réunion.
