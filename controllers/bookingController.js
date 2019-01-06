@@ -13,7 +13,6 @@ exports.findAll = (req, res) => {
 };
 
 exports.add = (req, res) => {
-    console.log(req.body);
     let bookingObj = new Booking(req.body);
     bookingObj.save()
         .then(data => {

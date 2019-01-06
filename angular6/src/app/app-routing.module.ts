@@ -27,7 +27,8 @@ const appRoutes: Routes = [
         path: 'book/:_id',
         component: BookingComponent
       }
-    ]/*canActivate: [AuthenticationGuard]*/
+    ],
+    canActivate: [AuthenticationGuard]
   },
 ];
 

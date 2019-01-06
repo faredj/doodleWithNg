@@ -60,6 +60,17 @@ const httpOptions = {
                 [checked]="!!this.getBooking(d, config.connectedUser()._id)">
               </mat-checkbox>
             </mat-grid-tile>
+            <div *ngFor="let u of participatedUsers">
+              <mat-grid-tile>
+                {{u.firstName }} {{u.lastName}}
+              </mat-grid-tile>
+              <mat-grid-tile *ngFor="let d of dates">
+                <mat-checkbox
+                  disabled="true"
+                  [checked]="!!this.getBooking(d, u._id)">
+                </mat-checkbox>
+              </mat-grid-tile>
+            </div>
           </mat-grid-list>
         </mat-card-content>
       </mat-card>
@@ -75,6 +86,7 @@ export class BookingComponent implements OnInit {
   protected bookings: Booking[] = [];
 
   protected dates: Date[];
+  protected participatedUsers: User[];
 
   constructor(private route: ActivatedRoute,
               protected http: HttpClient,
@@ -90,6 +102,7 @@ export class BookingComponent implements OnInit {
       calendar => {
         this.calendar = calendar;
         this.getBookings();
+        this.getParticipatedUsers();
         this.dates = this.getAllDates(new Date(this.calendar.startDate), new Date(this.calendar.endDate));
       },
       error => {
@@ -154,6 +167,19 @@ export class BookingComponent implements OnInit {
     return this.http.get<Booking[]>(`${config.baseUrl}bookings/${this.calendar._id}`, httpOptions).subscribe(
       bookings => {
         this.bookings = bookings || [];
+      },
+      error => {
+        this.snackBar.open(error.message, 'fermer', {duration: 1000})
+      }
+    );
+  }
+
+  getParticipatedUsers() {
+    let currentUserId = config.connectedUser()._id;
+    return this.http.get<User[]>(`${config.baseUrl}invitations/users/${this.calendar._id}`, httpOptions).subscribe(
+      participatedUsers => {
+        this.participatedUsers = participatedUsers;
+        this.participatedUsers = this.participatedUsers.filter(u => u._id != currentUserId);
       },
       error => {
         this.snackBar.open(error.message, 'fermer', {duration: 1000})

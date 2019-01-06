@@ -1,7 +1,8 @@
-var Calendar = require('../models/Calendar');
+var Calendar = require('../models/Calendar'),
+    Booking = require('../models/Booking'),
+    Invitation = require('../models/Invitation');
 
 exports.findAll = (req, res) => {
-    console.log(req.isAuthenticated());
     Calendar.find({'userId': req.params._id})
         .then(data => {
             res.json(data);
@@ -40,8 +41,24 @@ exports.findOne = (req, res) => {
 
 exports.delete = (req, res) => {
     Calendar.find({_id: req.body.calendarId}).remove()
-        .then(data => {
-            res.json(data);
+        .then(calendar => {
+            Invitation.find({invitedTo: req.body.calendarId}).remove()
+                .then(invitation => {
+                    Booking.find({calendarId: req.body.calendarId}).remove()
+                        .then(booking => {
+                            res.json(calendar);
+                        })
+                        .catch(err => {
+                            res.status(500).json({
+                                msg: err.message
+                            })
+                        });
+                })
+                .catch(err => {
+                    res.status(500).json({
+                        msg: err.message
+                    })
+                });
         })
         .catch(err => {
             res.status(500).json({
