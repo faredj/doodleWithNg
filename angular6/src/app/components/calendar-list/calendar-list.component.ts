@@ -146,6 +146,7 @@ export class CalendarListComponent implements OnInit {
     });
   }
 
+  //get all calendars (meetings) for the current user
   getCalendars() {
     this.isLoading = true;
     let userId = config.connectedUser()._id;
@@ -162,6 +163,7 @@ export class CalendarListComponent implements OnInit {
 
   }
 
+  //delete a calendar
   delete(id: string) {
     this.isDeleting = true;
     return this.http.post(`${config.baseUrl}calendars/delete`, {calendarId: id}, this.httpOptions).subscribe(
@@ -177,6 +179,7 @@ export class CalendarListComponent implements OnInit {
     )
   };
 
+  //participate to the meeting
   participate() {
     return this.http.post(`${config.baseUrl}invitations/invite`, {...this.refForm.value, ...{userId: config.connectedUser()._id}}, this.httpOptions).subscribe(
       data => {
@@ -193,6 +196,7 @@ export class CalendarListComponent implements OnInit {
     )
   }
 
+  //get all meeting invited to
   getCalendarsToParticipate() {
     let userId = config.connectedUser()._id;
     return this.http.get<Calendar[]>(`${config.baseUrl}invitations/calendars/${userId}`, this.httpOptions).subscribe(

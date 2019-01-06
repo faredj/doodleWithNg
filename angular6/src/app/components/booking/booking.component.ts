@@ -96,6 +96,7 @@ export class BookingComponent implements OnInit {
     this.getCalendar(this.route.snapshot.paramMap.get('_id'));
   }
 
+  // get all calendars (meetings) for the current user
   private getCalendar(id: string) {
     return this.http.get<Calendar>(`${config.baseUrl}calendars/${id}`, this.httpOptions).subscribe(
       calendar => {
@@ -110,6 +111,7 @@ export class BookingComponent implements OnInit {
     );
   }
 
+  //book a date in the calendar (meeting)
   protected book(e, date, user, booking) {
     if (e.checked) {
       if (this.getBooking(date, user._id) === null)
@@ -124,6 +126,7 @@ export class BookingComponent implements OnInit {
     }
   }
 
+  //add booking to the current reunion
   private addBooking(date, calendarId, userId) {
     this.http.post<Booking>(`${config.baseUrl}bookings/add`, {
       calendarId: calendarId,
@@ -140,6 +143,7 @@ export class BookingComponent implements OnInit {
     )
   }
 
+  //get booking with date and userId
   protected getBooking(date, userId): Booking {
     let bookingR: Booking = null;
     for (let b of this.bookings) {
@@ -151,6 +155,7 @@ export class BookingComponent implements OnInit {
     return bookingR;
   }
 
+  //delete booking from calendar
   private deleteBooking(id: string) {
     this.http.post<Booking>(`${config.baseUrl}bookings/delete`, {bookingId: id}, this.httpOptions).subscribe(
       data => {
@@ -162,6 +167,7 @@ export class BookingComponent implements OnInit {
     )
   }
 
+  //get all bookings for the calendar
   private getBookings() {
     return this.http.get<Booking[]>(`${config.baseUrl}bookings/${this.calendar._id}`, this.httpOptions).subscribe(
       bookings => {
@@ -173,6 +179,7 @@ export class BookingComponent implements OnInit {
     );
   }
 
+  //get all users participating to the current meeting
   getParticipatedUsers() {
     let currentUserId = config.connectedUser()._id;
     return this.http.get<User[]>(`${config.baseUrl}invitations/users/${this.calendar._id}`, this.httpOptions).subscribe(
@@ -186,6 +193,7 @@ export class BookingComponent implements OnInit {
     );
   }
 
+  //get booking by date
   protected getBookingsByDate(date): number {
     let nbBooking: number = 0;
     for (let b of this.bookings) {
@@ -195,6 +203,7 @@ export class BookingComponent implements OnInit {
     return nbBooking;
   }
 
+  //get all dates between startDate and endDate
   protected getAllDates(startDate, endDate) {
     var dates = [],
       currentDate = startDate,
@@ -210,6 +219,7 @@ export class BookingComponent implements OnInit {
     return dates;
   }
 
+  //copy text to the clipboard
   copyText(text: string) {
     let selected = document.createElement('textarea');
     selected.style.position = 'fixed';

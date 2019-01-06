@@ -108,6 +108,7 @@ export class CalendarComponent implements OnInit {
     });
   }
 
+  //add new reunion
   onSubmit() {
     return this.http.post<Calendar>(`${config.baseUrl}calendars/add`, this.formatCalendar({...this.generalFrom.value, ...this.datesForm.value}), this.httpOptions).subscribe(
       () => {
@@ -119,6 +120,7 @@ export class CalendarComponent implements OnInit {
       });
   }
 
+  //format the calendar object
   formatCalendar(calendar: object): any {
     return {
       ...calendar,

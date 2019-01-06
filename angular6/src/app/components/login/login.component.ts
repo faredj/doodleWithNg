@@ -52,6 +52,7 @@ export class LoginComponent implements OnInit {
     this.login(this.loginForm.get('email').value, this.loginForm.get('password').value);
   }
 
+  //authenticate the user
   private login(email: string, password: string) {
     return this.http.post(`${config.baseUrl}users/login`, {email: email, password: password})
       .pipe().subscribe(

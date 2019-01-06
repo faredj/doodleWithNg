@@ -68,6 +68,7 @@ export class RegisterComponent implements OnInit {
     });
   }
 
+  //register new user
   onSubmit() {
     return this.http.post<User>(`${config.baseUrl}users/register`, this.registerForm.value, httpOptions).subscribe(
       () => {

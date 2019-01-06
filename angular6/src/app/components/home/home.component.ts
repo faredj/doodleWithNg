@@ -33,6 +33,7 @@ export class HomeComponent implements OnInit {
     this.router.navigateByUrl('/');
   }
 
+  //destroy local token and user
   destroyLocalUser(): void {
     localStorage.clear();
   }
