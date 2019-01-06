@@ -1,13 +1,12 @@
 /**
- * The data-layer for a Doodle
- * @module models
+ * @fileOverview data model for Calendar
  */
+
 var mongoose = require('mongoose');
 
 /**
  * @constructor Calendar
  */
-
 var CalendarSchema = new mongoose.Schema({
     id: String,
     userId: String,

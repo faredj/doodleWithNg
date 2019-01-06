@@ -1,14 +1,11 @@
 /**
- * The data-layer for a User
- * @module models
+ * @fileOverview data model for User
  */
-    //Require the dev-dependencies
 var mongoose = require('mongoose');
 
 /**
  * @constructor User
  */
-
 var UserSchema = new mongoose.Schema({
     id: String,
     firstName: String,
@@ -17,7 +14,5 @@ var UserSchema = new mongoose.Schema({
     password: String,
     birthday: { type: Date },
 });
-
-//Exports the UserSchema for use elsewhere.
 
 module.exports = mongoose.model('User', UserSchema);

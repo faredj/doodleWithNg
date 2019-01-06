@@ -1,7 +1,5 @@
 /**
- * @fileOverview this file  contains all the routes of the requests concerning meetings
- * @path {POST} /api/calendars/add request to create new meeting.
- * @path {PUT} api/calendars/delete  request to remove a meeting
+ * @fileOverview this file  contains all the routes of the requests concerning calendars
  */
 var passport = require('passport');
 
