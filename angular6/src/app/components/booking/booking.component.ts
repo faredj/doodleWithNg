@@ -1,19 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {config} from "../../shared/config";
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Calendar} from "../../models/Calendar";
 import {MatSnackBar} from "@angular/material";
 import {Utils} from "../../shared/utils";
 import {Booking} from "../../models/Booking";
 import {User} from "../../models/User";
-import {header} from "express-validator/check";
-
-const httpOptions = {
-  headers: new HttpHeaders({
-    'Authorization': `Bearer ${localStorage.getItem('token')}`
-  })
-};
 
 @Component({
   selector: 'app-booking',
@@ -87,10 +80,16 @@ export class BookingComponent implements OnInit {
 
   protected dates: Date[];
   protected participatedUsers: User[];
+  httpOptions = {};
 
   constructor(private route: ActivatedRoute,
               protected http: HttpClient,
               public snackBar: MatSnackBar) {
+    this.httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      })
+    };
   }
 
   ngOnInit() {
@@ -98,7 +97,7 @@ export class BookingComponent implements OnInit {
   }
 
   private getCalendar(id: string) {
-    return this.http.get<Calendar>(`${config.baseUrl}calendars/${id}`, httpOptions).subscribe(
+    return this.http.get<Calendar>(`${config.baseUrl}calendars/${id}`, this.httpOptions).subscribe(
       calendar => {
         this.calendar = calendar;
         this.getBookings();
@@ -131,7 +130,7 @@ export class BookingComponent implements OnInit {
       userId: userId,
       reservedDate: date,
       creationDate: new Date()
-    }, httpOptions).subscribe(
+    }, this.httpOptions).subscribe(
       data => {
         this.bookings.push(data);
       },
@@ -153,7 +152,7 @@ export class BookingComponent implements OnInit {
   }
 
   private deleteBooking(id: string) {
-    this.http.post<Booking>(`${config.baseUrl}bookings/delete`, {bookingId: id}, httpOptions).subscribe(
+    this.http.post<Booking>(`${config.baseUrl}bookings/delete`, {bookingId: id}, this.httpOptions).subscribe(
       data => {
         this.bookings = this.bookings.filter(b => b._id != id);
       },
@@ -164,7 +163,7 @@ export class BookingComponent implements OnInit {
   }
 
   private getBookings() {
-    return this.http.get<Booking[]>(`${config.baseUrl}bookings/${this.calendar._id}`, httpOptions).subscribe(
+    return this.http.get<Booking[]>(`${config.baseUrl}bookings/${this.calendar._id}`, this.httpOptions).subscribe(
       bookings => {
         this.bookings = bookings || [];
       },
@@ -176,7 +175,7 @@ export class BookingComponent implements OnInit {
 
   getParticipatedUsers() {
     let currentUserId = config.connectedUser()._id;
-    return this.http.get<User[]>(`${config.baseUrl}invitations/users/${this.calendar._id}`, httpOptions).subscribe(
+    return this.http.get<User[]>(`${config.baseUrl}invitations/users/${this.calendar._id}`, this.httpOptions).subscribe(
       participatedUsers => {
         this.participatedUsers = participatedUsers;
         this.participatedUsers = this.participatedUsers.filter(u => u._id != currentUserId);

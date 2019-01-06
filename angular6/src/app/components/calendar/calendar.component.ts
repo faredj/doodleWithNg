@@ -5,16 +5,8 @@ import {Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material";
 import {CustomValidators} from "../../shared/customValidators";
 import {Utils} from "../../shared/utils";
-import {User} from "../../models/User";
 import {config} from "../../shared/config";
 import {Calendar} from "../../models/Calendar";
-
-const httpOptions = {
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${localStorage.getItem('token')}`
-  })
-};
 
 @Component({
   selector: 'app-calendar',
@@ -89,11 +81,17 @@ export class CalendarComponent implements OnInit {
   isLinear = true;
   generalFrom: FormGroup;
   datesForm: FormGroup;
+  httpOptions = {};
 
   constructor(protected http: HttpClient,
               private router: Router,
               private formBuilder: FormBuilder,
               public snackBar: MatSnackBar) {
+    this.httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      })
+    };
   }
 
   ngOnInit() {
@@ -111,7 +109,7 @@ export class CalendarComponent implements OnInit {
   }
 
   onSubmit() {
-    return this.http.post<Calendar>(`${config.baseUrl}calendars/add`, this.formatCalendar({...this.generalFrom.value, ...this.datesForm.value}), httpOptions).subscribe(
+    return this.http.post<Calendar>(`${config.baseUrl}calendars/add`, this.formatCalendar({...this.generalFrom.value, ...this.datesForm.value}), this.httpOptions).subscribe(
       () => {
         this.router.navigateByUrl('/home');
         this.snackBar.open('Calendrier créé avec succès', 'fermer', {duration: 2000});

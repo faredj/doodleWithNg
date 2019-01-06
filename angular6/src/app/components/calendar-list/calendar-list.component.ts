@@ -1,18 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {Calendar} from "../../models/Calendar";
 import {config} from "../../shared/config";
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
-import {Router} from "@angular/router";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {MatSnackBar} from "@angular/material";
 import {Utils} from "../../shared/utils";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {User} from "../../models/User";
-
-const httpOptions = {
-  headers: new HttpHeaders({
-    'Authorization': `Bearer ${localStorage.getItem('token')}`
-  })
-};
 
 @Component({
   selector: 'app-calendar-list',
@@ -129,6 +121,8 @@ export class CalendarListComponent implements OnInit {
   isDeleting: boolean = false;
   isLoading: boolean = false;
   refForm: FormGroup;
+  httpOptions = {};
+
 
   dc: string[] = ['title', 'description', 'address', 'startDate', 'endDate', '_id'];
   calendars: Calendar[];
@@ -137,6 +131,11 @@ export class CalendarListComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
               protected http: HttpClient,
               public snackBar: MatSnackBar) {
+    this.httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      })
+    };
   }
 
   ngOnInit() {
@@ -149,29 +148,23 @@ export class CalendarListComponent implements OnInit {
 
   getCalendars() {
     this.isLoading = true;
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      })
-    };
-    setTimeout(() => {
-      let userId = config.connectedUser()._id;
-      return this.http.get<Calendar[]>(`${config.baseUrl}calendars/all/${userId}`, httpOptions).subscribe(
-        calendars => {
-          this.calendars = calendars;
-          this.isLoading = false;
-        },
-        error => {
-          this.snackBar.open(error.message, 'fermer', {duration: 1000})
-          this.isLoading = false;
-        }
-      );
-    }, 2000);
+    let userId = config.connectedUser()._id;
+    return this.http.get<Calendar[]>(`${config.baseUrl}calendars/all/${userId}`, this.httpOptions).subscribe(
+      calendars => {
+        this.calendars = calendars;
+        this.isLoading = false;
+      },
+      error => {
+        this.snackBar.open(error.message, 'fermer', {duration: 1000});
+        this.isLoading = false;
+      }
+    );
+
   }
 
   delete(id: string) {
     this.isDeleting = true;
-    return this.http.post(`${config.baseUrl}calendars/delete`, {calendarId: id}, httpOptions).subscribe(
+    return this.http.post(`${config.baseUrl}calendars/delete`, {calendarId: id}, this.httpOptions).subscribe(
       calendar => {
         this.isDeleting = false;
         this.calendars = this.calendars.filter(c => c._id != id);
@@ -185,8 +178,7 @@ export class CalendarListComponent implements OnInit {
   };
 
   participate() {
-    let userId = config.connectedUser()._id;
-    return this.http.post(`${config.baseUrl}invitations/invite`, {...this.refForm.value, ...{userId: config.connectedUser()._id}}, httpOptions).subscribe(
+    return this.http.post(`${config.baseUrl}invitations/invite`, {...this.refForm.value, ...{userId: config.connectedUser()._id}}, this.httpOptions).subscribe(
       data => {
         if (data['success']) {
           this.getCalendarsToParticipate();
@@ -203,7 +195,7 @@ export class CalendarListComponent implements OnInit {
 
   getCalendarsToParticipate() {
     let userId = config.connectedUser()._id;
-    return this.http.get<Calendar[]>(`${config.baseUrl}invitations/calendars/${userId}`, httpOptions).subscribe(
+    return this.http.get<Calendar[]>(`${config.baseUrl}invitations/calendars/${userId}`, this.httpOptions).subscribe(
       calendarsToParticipate => {
         this.calendarsToParticipate = calendarsToParticipate;
       },
