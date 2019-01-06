@@ -27,7 +27,7 @@ exports.add = (req, res) => {
 };
 
 exports.findOne = (req, res) => {
-    Booking.findOne({'_id': req.params._id})
+    Booking.findOne({_id: req.params._id})
         .then(data => {
             res.json(data);
         })

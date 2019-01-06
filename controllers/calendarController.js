@@ -1,7 +1,8 @@
 var Calendar = require('../models/Calendar');
 
 exports.findAll = (req, res) => {
-    Calendar.find({'userId': req.query.userId})
+    console.log(req.isAuthenticated());
+    Calendar.find({'userId': req.params._id})
         .then(data => {
             res.json(data);
         })

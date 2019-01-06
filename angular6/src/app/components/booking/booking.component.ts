@@ -1,12 +1,19 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {config} from "../../shared/config";
-import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Calendar} from "../../models/Calendar";
 import {MatSnackBar} from "@angular/material";
 import {Utils} from "../../shared/utils";
 import {Booking} from "../../models/Booking";
 import {User} from "../../models/User";
+import {header} from "express-validator/check";
+
+const httpOptions = {
+  headers: new HttpHeaders({
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  })
+};
 
 @Component({
   selector: 'app-booking',
@@ -14,8 +21,21 @@ import {User} from "../../models/User";
   template: `
     <div>
       <mat-card class="calendarBook_container">
-        <mat-card-title>
+        <mat-card-title class="calendarBook_titleCard">
           <h5 *ngIf="calendar">Réunion : {{calendar.title}}</h5>
+          <div class="calendarBook_linkToShare">
+            <mat-card *ngIf="calendar">
+              <p>
+                Pour partager ce calendrier envoyer le lien ci-dessous :<br/>
+                <b>{{config.baseUrl}}calendars/share/{{calendar._id}}</b>
+              </p>
+              <mat-icon
+                matTooltip="Copier le lien"
+                (click)="copyText(config.baseUrl+'calendars/share/'+calendar._id)">
+                filter_none
+              </mat-icon>
+            </mat-card>
+          </div>
         </mat-card-title>
         <mat-card-content>
           <mat-grid-list *ngIf="dates" cols="{{dates.length + 1}}" rowHeight="4:2">
@@ -25,10 +45,20 @@ import {User} from "../../models/User";
               <h5>{{utils.dateToString2(d)}}</h5>
             </mat-grid-tile>
             <mat-grid-tile>
-              {{config.currentUser().firstName }} {{config.currentUser().lastName}}
+              <span>Participations</span>
             </mat-grid-tile>
             <mat-grid-tile *ngFor="let d of dates">
-              <mat-checkbox (change)="book($event, d, config.currentUser())"></mat-checkbox>
+              <mat-icon>done</mat-icon>
+              <h4>{{getBookingsByDate(d)}}</h4>
+            </mat-grid-tile>
+            <mat-grid-tile>
+              {{config.connectedUser().firstName }} {{config.connectedUser().lastName}}
+            </mat-grid-tile>
+            <mat-grid-tile *ngFor="let d of dates">
+              <mat-checkbox
+                (change)="book($event, d, config.connectedUser(), this.getBooking(d, config.connectedUser()._id))"
+                [checked]="!!this.getBooking(d, config.connectedUser()._id)">
+              </mat-checkbox>
             </mat-grid-tile>
           </mat-grid-list>
         </mat-card-content>
@@ -42,7 +72,7 @@ export class BookingComponent implements OnInit {
   readonly config = config;
 
   protected calendar: Calendar;
-  protected bookings: Booking[];
+  protected bookings: Booking[] = [];
 
   protected dates: Date[];
 
@@ -56,34 +86,39 @@ export class BookingComponent implements OnInit {
   }
 
   private getCalendar(id: string) {
-    return this.http.get<Calendar>(`${config.baseUrl}calendars/${id}`).subscribe(
+    return this.http.get<Calendar>(`${config.baseUrl}calendars/${id}`, httpOptions).subscribe(
       calendar => {
         this.calendar = calendar;
-        this.getBookins();
+        this.getBookings();
         this.dates = this.getAllDates(new Date(this.calendar.startDate), new Date(this.calendar.endDate));
       },
       error => {
-        this.snackBar.open(error.message, 'fermer', {duration: 1000})
+        this.snackBar.open(error.message, 'fermer', {duration: 2000})
       }
     );
   }
 
-  protected book(e, date, user) {
+  protected book(e, date, user, booking) {
     if (e.checked) {
-      this.addBooking(date, this.calendar._id, user._id)
+      if (this.getBooking(date, user._id) === null)
+        this.addBooking(date, this.calendar._id, user._id);
+      else
+        this.snackBar.open('Créneau déjà réservé', 'fermer', {duration: 2000});
     } else {
-
+      if (this.getBooking(date, user._id)) {
+        this.deleteBooking(booking._id);
+      } else
+        this.snackBar.open('Erreur lors de la réservation', 'fermer', {duration: 2000});
     }
   }
 
   private addBooking(date, calendarId, userId) {
-    //console.log(this.isReserved(date, userId));
     this.http.post<Booking>(`${config.baseUrl}bookings/add`, {
       calendarId: calendarId,
       userId: userId,
       reservedDate: date,
       creationDate: new Date()
-    }).subscribe(
+    }, httpOptions).subscribe(
       data => {
         this.bookings.push(data);
       },
@@ -93,23 +128,20 @@ export class BookingComponent implements OnInit {
     )
   }
 
-  protected isReserved(date, userId): boolean {
-    console.log(date, userId, this.bookings);
-    let reserved: boolean;
-    //return this.bookings.find(b => (new Date(b.reservedDate) === date && b.userId === userId));
-    for(let b of this.bookings){
-      if(new Date(b.reservedDate)=== date && b.userId === userId){
-        reserved = true;
+  protected getBooking(date, userId): Booking {
+    let bookingR: Booking = null;
+    for (let b of this.bookings) {
+      if (new Date(b.reservedDate).getTime() === date.getTime() && b.userId === userId) {
+        bookingR = b;
         break;
       }
     }
-    return reserved;
+    return bookingR;
   }
 
   private deleteBooking(id: string) {
-    this.http.post<Booking>(`${config.baseUrl}bookings/delete`, {bookingId: id}).subscribe(
+    this.http.post<Booking>(`${config.baseUrl}bookings/delete`, {bookingId: id}, httpOptions).subscribe(
       data => {
-        console.log('deleted');
         this.bookings = this.bookings.filter(b => b._id != id);
       },
       error => {
@@ -118,8 +150,8 @@ export class BookingComponent implements OnInit {
     )
   }
 
-  private getBookins() {
-    return this.http.get<Booking[]>(`${config.baseUrl}bookings/${this.calendar._id}`).subscribe(
+  private getBookings() {
+    return this.http.get<Booking[]>(`${config.baseUrl}bookings/${this.calendar._id}`, httpOptions).subscribe(
       bookings => {
         this.bookings = bookings || [];
       },
@@ -127,6 +159,15 @@ export class BookingComponent implements OnInit {
         this.snackBar.open(error.message, 'fermer', {duration: 1000})
       }
     );
+  }
+
+  protected getBookingsByDate(date): number {
+    let nbBooking: number = 0;
+    for (let b of this.bookings) {
+      if (new Date(b.reservedDate).getTime() === date.getTime())
+        nbBooking++;
+    }
+    return nbBooking;
   }
 
   protected getAllDates(startDate, endDate) {
@@ -142,5 +183,20 @@ export class BookingComponent implements OnInit {
       currentDate = addDays.call(currentDate, 1);
     }
     return dates;
+  }
+
+  copyText(text: string) {
+    let selected = document.createElement('textarea');
+    selected.style.position = 'fixed';
+    selected.style.left = '0';
+    selected.style.top = '0';
+    selected.style.opacity = '0';
+    selected.value = text;
+    document.body.appendChild(selected);
+    selected.focus();
+    selected.select();
+    document.execCommand('copy');
+    document.body.removeChild(selected);
+    this.snackBar.open('Lien copié !', 'fermer', {duration: 1000})
   }
 }

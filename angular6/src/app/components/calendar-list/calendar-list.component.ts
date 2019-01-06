@@ -4,11 +4,12 @@ import {config} from "../../shared/config";
 import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material";
-import {calendarFormat} from "moment";
 import {Utils} from "../../shared/utils";
 
 const httpOptions = {
-  headers: new HttpHeaders({'Content-Type': 'application/json'})
+  headers: new HttpHeaders({
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  })
 };
 
 @Component({
@@ -84,9 +85,9 @@ export class CalendarListComponent implements OnInit {
   }
 
   getCalendars() {
-    let userId = config.currentUser()._id;
-    let params = new HttpParams().set('userId', userId);
-    return this.http.get<Calendar[]>(`${config.baseUrl}calendars`, {params: params}).subscribe(
+    let userId = config.connectedUser()._id,
+      authHeaders = new HttpHeaders().set('Authorization', `Bearer ${localStorage.getItem('token')}`);
+    return this.http.get<Calendar[]>(`${config.baseUrl}calendars/all/${userId}`, httpOptions).subscribe(
       calendars => {
         this.calendars = calendars;
       },
@@ -98,7 +99,7 @@ export class CalendarListComponent implements OnInit {
 
   delete(id: string) {
     this.isDeleting = true;
-    return this.http.post(`${config.baseUrl}calendars/delete`, {calendarId: id}).subscribe(
+    return this.http.post(`${config.baseUrl}calendars/delete`, {calendarId: id}, httpOptions).subscribe(
       calendar => {
         this.isDeleting = false;
         this.calendars = this.calendars.filter(c => c._id != id);
