@@ -1,11 +1,7 @@
 const request = require('supertest');
 const app = require('../app');
 var chai= require('chai');
-//var chaiHTTP = require('chai-http');
-//chai.use(chaiHTTP);
-//let should = chai.should;
-//let assert;
-//assert = chai.assert;
+
 
 describe('a suite of tests', function() {
     this.timeout(3000);
@@ -13,7 +9,7 @@ describe('a suite of tests', function() {
     it('should take less than 500ms', function(done){
         setTimeout(done, 300);
     });
-})
+});
 
 
 describe('GET /users', function(done) {

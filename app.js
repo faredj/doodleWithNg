@@ -5,9 +5,7 @@
 //importer les modules à utiliser
 let express = require('express'),
     http = require('http'),
-    path = require('path'),
     passport = require('passport'),
-    config = require('./config/config'),
     bodyParser = require('body-parser'),
     app = express(),
     mongoose = require('mongoose'),
