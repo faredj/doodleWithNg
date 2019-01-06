@@ -1,3 +1,6 @@
+/**
+ * @fileOverview this file  contains all the routes of the requests concerning booking.
+ */
 var passport = require('passport');
 module.exports = function (app) {
     const bookings = require('../controllers/bookingController');

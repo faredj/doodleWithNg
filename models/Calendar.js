@@ -1,4 +1,12 @@
+/**
+ * The data-layer for a Doodle
+ * @module models
+ */
 var mongoose = require('mongoose');
+
+/**
+ * @constructor Calendar
+ */
 
 var CalendarSchema = new mongoose.Schema({
     id: String,

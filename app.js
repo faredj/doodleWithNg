@@ -14,15 +14,15 @@ let express = require('express'),
 //init port
 port = process.env.PORT || '3000';
 
-//utiliser bleubird pour l'async
+//use bleubird for the async*/
 mongoose.Promise = require('bluebird');
 
-//connexion à la base de donnée
+//Database Connection*/
 mongoose.connect('mongodb://localhost/doodledb', {promiseLibrary: require('bluebird')})
     .then(() => console.log('Connexion à MongoDB réussie'))
     .catch((err) => console.error(err));
 
-//parser le req.body pour exploiter les données reçues
+//parse the req.body to exploit the received data*/
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({'extended': true}));
 
@@ -30,10 +30,10 @@ app.use(bodyParser.urlencoded({'extended': true}));
 app.use(passport.initialize());
 require('./config/passport')(passport);
 
-//express-validator contient des fonctions de validations utilisés par Express
+//express-validator contains validation functions used by Express*/
 app.use(expressValidator());
 
-//charger l'application Angular6 depuis le répertoire 'public/dist/browser'
+// to load the Angular6 application from the directory 'public/dist/browser'*/
 app.use('/', express.static(path.join(__dirname, 'public/dist/browser')));
 
 //app.get('/*', (req, res) => res.sendFile(path.join(__dirname)));
@@ -47,7 +47,7 @@ const corsOptions = {
     optionsSuccessStatus: 200
 };
 
-//activer CORS avec les options déjà définies
+//activate CORS with already defined options*/
 app.use(cors(corsOptions));
 
 require('./routes/users')(app);
@@ -55,25 +55,25 @@ require('./routes/calendars')(app);
 require('./routes/bookings')(app);
 require('./routes/invitations')(app);
 
-// capturer l'erreur 404
+// capture error 404*/
 app.use((req, res, next) => {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
-// error handler
+// error handler*/
 app.use((err, req, res) => {
     res.status(err.status || 500);
     res.send(JSON.stringify('error'));
 });
 
-//set le port de l'application
+//set the port of the application*/
 app.set('port', port);
 
 
-//créer le serveur
+//create the server*/
 var server = http.createServer(app);
 
-//lancer le serveur
+//launch the server*/
 server.listen(port);

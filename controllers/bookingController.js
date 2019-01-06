@@ -1,3 +1,7 @@
+/**
+ * @fileOverview this file contains the request to create a new booking as well as the request to delete a booking
+ */
+
 var Booking = require('../models/Booking');
 
 exports.findAll = (req, res) => {
@@ -11,7 +15,7 @@ exports.findAll = (req, res) => {
             });
         });
 };
-
+/**add a booking*/
 exports.add = (req, res) => {
     let bookingObj = new Booking(req.body);
     bookingObj.save()
@@ -36,7 +40,7 @@ exports.findOne = (req, res) => {
             });
         });
 };
-
+/**delete a booking*/
 exports.delete = (req, res) => {
     Booking.find({_id: req.body.bookingId}).remove()
         .then(data => {

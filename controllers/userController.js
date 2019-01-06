@@ -1,3 +1,8 @@
+/**
+ * @fileOverview this file contains the request to create a new user, to sign up as well as the request to login and logout
+ */
+
+
 var User = require('../models/User');
 var bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -13,6 +18,14 @@ exports.findAll = (req, res) => {
         });
     });
 };
+/**
+ * Register
+ *
+ * @name Registration
+ * @body {String} password to secure the account
+ * @response {Object} user the informations of the user
+ * @code {500} if  it's a bad request
+ */
 
 exports.register = (req, res) => {
     var user = req.body;
@@ -29,6 +42,15 @@ exports.register = (req, res) => {
         });
     });
 };
+
+/**
+ * Login
+ *
+ * @name Authentification
+ * @response {Object} user the informations of the user
+ * @response {String} token the token of the session
+ */
+
 
 exports.login = (req, res) => {
     if (req.body.email && req.body.password) {
