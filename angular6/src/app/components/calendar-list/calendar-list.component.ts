@@ -18,6 +18,7 @@ const httpOptions = {
   selector: 'app-calendar-list',
   styleUrls: ['./calendar-list.component.css'],
   template: `
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="warn"></mat-progress-bar>
     <div>
       <mat-card class="calendarList_container">
         <mat-card-title class="calendarList_titleCard">
@@ -126,6 +127,7 @@ export class CalendarListComponent implements OnInit {
 
   readonly utils = Utils;
   isDeleting: boolean = false;
+  isLoading: boolean = false;
   refForm: FormGroup;
 
   dc: string[] = ['title', 'description', 'address', 'startDate', 'endDate', '_id'];
@@ -134,7 +136,6 @@ export class CalendarListComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               protected http: HttpClient,
-              private router: Router,
               public snackBar: MatSnackBar) {
   }
 
@@ -147,15 +148,25 @@ export class CalendarListComponent implements OnInit {
   }
 
   getCalendars() {
-    let userId = config.connectedUser()._id;
-    return this.http.get<Calendar[]>(`${config.baseUrl}calendars/all/${userId}`, httpOptions).subscribe(
-      calendars => {
-        this.calendars = calendars;
-      },
-      error => {
-        this.snackBar.open(error.message, 'fermer', {duration: 1000})
-      }
-    );
+    this.isLoading = true;
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      })
+    };
+    setTimeout(() => {
+      let userId = config.connectedUser()._id;
+      return this.http.get<Calendar[]>(`${config.baseUrl}calendars/all/${userId}`, httpOptions).subscribe(
+        calendars => {
+          this.calendars = calendars;
+          this.isLoading = false;
+        },
+        error => {
+          this.snackBar.open(error.message, 'fermer', {duration: 1000})
+          this.isLoading = false;
+        }
+      );
+    }, 2000);
   }
 
   delete(id: string) {
