@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controllers/invitationController.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controllers/invitationController.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileOverview this file contains the request to create/delete/findOne invitation and find all invitations
+ */
+
+let Invitation = require('../models/Invitation'),
+    Calendar = require('../models/Calendar'),
+    User = require('../models/User');
+
+/**
+ * Invite a user to a calendar (meeting)
+ *
+ * @name invite
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {JSON} invitation data
+ * */
+exports.invite = (req, res) => {
+    Calendar.findOne({'_id': req.body.refToShare})
+        .then(calendar => {
+            if (calendar === null) {
+                res.json({'msg': 'Réunion introuvable', success: false});
+            } else if (calendar.userId == req.body.userId) {
+                res.json({'msg': 'La réunion est déjà existant pour cet user', success: false});
+            } else {
+                Invitation.findOne({invitedTo: req.body.refToShare, invitedId: req.body.userId})
+                    .then(invitation => {
+
+                        if (invitation !== null) {
+                            res.json({'msg': 'Vous éte déjà invité à cette réunion', success: false});
+                        } else {
+                            let invitationObj = new Invitation({
+                                invitedId: req.body.userId,
+                                invitedTo: req.body.refToShare
+                            });
+                            invitationObj.save()
+                                .then(invitation => {
+                                    res.json({...{invitation: invitation}, ...{calendar: calendar}, ...{success: true}});
+                                })
+                                .catch(err => {
+                                    res.status(500).json({
+                                        msg: err.message
+                                    })
+                                });
+                        }
+                    })
+                    .catch(err => {
+                        res.status(500).json({
+                            msg: err.message
+                        });
+                    });
+            }
+        })
+        .catch(err => {
+            res.status(500).json({
+                msg: err.message
+            });
+        });
+};
+
+/**
+ * find all calendars for an invitation
+ *
+ * @name findAllCalendars
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {JSON} find data
+ * */
+exports.findAllCalendars = (req, res) => {
+    Invitation.find({invitedId: req.params.userId})
+        .then(data => {
+            let calendarsIds = data.map(i => i.invitedTo);
+            Calendar.find({_id: {$in: [...calendarsIds]}})
+                .then(data => {
+                    res.json(data);
+                })
+                .catch(err => {
+                    res.status(500).json({
+                        msg: err.message
+                    });
+                });
+        })
+        .catch(err => {
+            res.status(500).json({
+                msg: err.message
+            });
+        });
+};
+
+/**
+ * find all users for an invitation
+ *
+ * @name findAllUsers
+ * @param {Object} req request object
+ * @param {Object} res response object
+ * @return {JSON} find data
+ * */
+exports.findAllUsers = (req, res) => {
+    Invitation.find({invitedTo: req.params.calendarId})
+        .then(data => {
+            Calendar.findOne({'_id': req.params.calendarId})
+                .then(calendar => {
+                    let usersIds = data.map(i => i.invitedId);
+                    usersIds.push(calendar.userId);
+                    User.find({_id: {$in: [...usersIds]}})
+                        .then(data => {
+                            res.json(data);
+                        })
+                        .catch(err => {
+                            res.status(500).json({
+                                msg: err.message
+                            });
+                        });
+                })
+                .catch(err => {
+                    res.status(500).json({
+                        msg: err.message
+                    });
+                });
+        })
+        .catch(err => {
+            res.status(500).json({
+                msg: err.message
+            });
+        });
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Booking.html">Booking</a></li><li><a href="Calendar.html">Calendar</a></li><li><a href="Invitation.html">Invitation</a></li><li><a href="User.html">User</a></li></ul><h3>Global</h3><ul><li><a href="global.html#add">add</a></li><li><a href="global.html#delete">delete</a></li><li><a href="global.html#findAll">findAll</a></li><li><a href="global.html#findAllCalendars">findAllCalendars</a></li><li><a href="global.html#findAllUsers">findAllUsers</a></li><li><a href="global.html#findOne">findOne</a></li><li><a href="global.html#invite">invite</a></li><li><a href="global.html#login">login</a></li><li><a href="global.html#register">register</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jan 06 2019 18:56:05 GMT+0100 (Paris, Madrid)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

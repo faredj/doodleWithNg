@@ -1,5 +1,11 @@
+/**
+ * @fileOverview data model for User
+ */
 var mongoose = require('mongoose');
 
+/**
+ * @constructor User
+ */
 var UserSchema = new mongoose.Schema({
     id: String,
     firstName: String,
