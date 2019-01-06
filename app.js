@@ -25,6 +25,8 @@ mongoose.Promise = require('bluebird');
 mongoose.connect('mongodb://localhost/doodledb', {promiseLibrary: require('bluebird')})
     .then(() => console.log('Connexion à MongoDB réussie'))
     .catch((err) => console.error(err));
+    
+mongoose.set('useFindAndModify', false);
 
 //parse the req.body to exploit the received data*/
 app.use(bodyParser.json());
@@ -75,5 +77,7 @@ app.set('port', port);
 //create the server*/
 var server = http.createServer(app);
 
-//launch the server*/
+//lancer le serveur
 server.listen(port);
+module.exports = app;
+
