@@ -10,7 +10,10 @@ import {config} from "../../shared/config";
 import {Calendar} from "../../models/Calendar";
 
 const httpOptions = {
-  headers: new HttpHeaders({'Content-Type': 'application/json'})
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  })
 };
 
 @Component({
@@ -122,7 +125,7 @@ export class CalendarComponent implements OnInit {
     return {
       ...calendar,
       ...{
-        'userId': config.currentUser()._id,
+        'userId': config.connectedUser()._id,
         'dateCreation': new Date()
       }
     }

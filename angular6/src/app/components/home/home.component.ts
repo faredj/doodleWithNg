@@ -11,6 +11,7 @@ import {config} from "../../shared/config";
       <a mat-button routerLink="/home"><h3>Doodle</h3></a>
       <span class="fill-space"></span>
       <button mat-button [routerLink]="['/home/create']" routerLinkActive="active">Organiser une réunion</button>
+      <button mat-button [routerLink]="['/home/']" routerLinkActive="active">Mes réunions</button>
       <button mat-button (click)="logout()">Se déconnecter</button>
     </mat-toolbar>
     <div>
@@ -28,12 +29,8 @@ export class HomeComponent implements OnInit {
   }
 
   logout(): void {
-    this.http.get(`${config.baseUrl}users/logout`).subscribe(
-      data => {
-        this.destroyLocalUser();
-        this.router.navigateByUrl('/');
-      }
-    )
+    this.destroyLocalUser();
+    this.router.navigateByUrl('/');
   }
 
   destroyLocalUser(): void {
