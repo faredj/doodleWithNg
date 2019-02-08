@@ -1,13 +1,5 @@
 # Equivalent de Doodle pour planification des réunions
 
-## Réalisé par :
-
- - Faredj HAMMACHE
- - Hocine ALOUANE
- - Farid HADJADJ
- - Abdelmalek HOUFEL
-
-
 ## Installation de l'application
 
  **1. MongoDB**
